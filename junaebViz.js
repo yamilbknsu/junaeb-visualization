@@ -42,7 +42,9 @@ Promise.all([d3.json('data/school_links.json'),
     
     mapView.g.selectAll('circle.school')
         .on('click', function(d) {
-            console.log(routes[d.properties.node_id]);
+            d3.selectAll('circle.student-static').remove()
+            d3.selectAll('path.street-route').remove()
+            d3.select("#school-display").html("School: " + d.properties.node_id)
             animateSchoolRoute(routes[d.properties.node_id], edges, students);
         })
 
@@ -52,12 +54,7 @@ Promise.all([d3.json('data/school_links.json'),
 function animateSchoolRoute(route, edges, students) {
     sp = []
     route.forEach(edgeID => sp.push(edges.features.find(edge => edge.properties.osmid == edgeID)))
-    mapView.g.selectAll('path')
-        .data(sp)
-        .enter()
-        .append('path')
-        .attr("d", d3Path)
-        .attr("class", "street-route");
+    
     // this function is project-specific thats why is here.
     animateNextPath = (
         mapView,
@@ -75,14 +72,16 @@ function animateSchoolRoute(route, edges, students) {
                             console.log(d.properties.osmid);
                             return d.properties.osmid;
                         })
-                        .attr("r", 5)
                         .attr('cx', function (d) {
                             coor = d.geometry.coordinates
                             return map.latLngToLayerPoint([coor[1], coor[0]]).x;
                         }).attr('cy', function (d) {
                             coor = d.geometry.coordinates
                             return map.latLngToLayerPoint([coor[1], coor[0]]).y;
-                        });
+                        })
+                        .transition()
+                        .duration(1000)
+                        .attr("r", 3)
                 console.log("new student")
             } 
             animatePath({mapView: mapView, path: path, ipath: ipath + 1, onEndFunction: animateNextPath});

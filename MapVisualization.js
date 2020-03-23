@@ -4,7 +4,7 @@ let gMainView;
 // Projection objects
 let d3Path;
 
-let simRatio = 100;
+let simRatio = 25;
 
 function newMapVisualization(centerCoords, // Coords object
     boundingBox, // List of two Coords objects [SW, NE]
@@ -113,6 +113,14 @@ function reset() {
     });
 
     d3.selectAll('path').attr("d", d3Path);
+    d3.selectAll('cirle.student-static')
+                .attr('cx', function (d) {
+                    coor = d.geometry.coordinates
+                    return map.latLngToLayerPoint([coor[1], coor[0]]).x;
+                }).attr('cy', function (d) {
+                    coor = d.geometry.coordinates
+                    return map.latLngToLayerPoint([coor[1], coor[0]]).y;
+                });
     Object.keys(drawnStreets).forEach((key) => {
         drawnStreets[key]
             .attr('d', d3Path);
@@ -257,20 +265,22 @@ function getPaths(name) {
 }
 
 function animatePath({mapView, 
-                    path, 
+                    path,
+                    pointClass = 'truck',
+                    edgeClass = 'street-route', 
                     ipath = 0,
                     onEndFunction = () => undefined} = {}){
     
     currentPath = path[ipath];
-    pathObject = mapView.g.selectAll('path')            
-            .append('path')
-            .datum(currentPath)
-            .attr("class", "street-route")
-            .attr("d", d3Path);
+    console.log(currentPath)
+    pathObject = mapView.g.append('path')
+                            .datum(currentPath)
+                            .attr("class", edgeClass)
+                            .attr("d", d3Path);
     //console.log(pathObject.node())
     
     mapView.g.append("circle")
-                .attr("class", "truck")
+                .attr("class", pointClass)
                 .attr("r", 3)
                 .transition()
                 .ease(d3.easeLinear)
@@ -279,12 +289,13 @@ function animatePath({mapView,
                     return function (t) {
                         var pathLength = pathObject.node().getTotalLength();
                         var p = pathObject.node().getPointAtLength(t * pathLength);
+                        pathObject.style("opacity", t);
                         return "translate(" + p.x + ", " + p.y + ")";
                     }
                 })
                 .on("end", function() {
                     d3.select(this).remove();
-                    pathObject.remove();
+                    //pathObject.remove();
                     onEndFunction(mapView, path, ipath);
                 })
             
