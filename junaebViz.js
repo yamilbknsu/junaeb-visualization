@@ -42,7 +42,7 @@ Promise.all([d3.json('data/school_links.json'),
 
     route = routes['c4561']
     
-    sp = edges.features.filter(edge => route.includes(edge.properties.id))
+    sp = edges.features.filter(edge => route.includes(edges.features.indexOf(edge)))
     console.log(sp)
 
     animatePath(mapView, sp)
