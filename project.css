@@ -1,7 +1,8 @@
 .student-static{
-    fill:rgb(44, 22, 107);
+    fill:rgb(0, 206, 27);
     cursor: pointer;
     z-index: 900;
+    opacity: 0.4;
 }
 
 .school{
@@ -13,7 +14,7 @@
 }
 
 .truck{
-    fill:rgb(11, 206, 20);
+    fill:rgb(79, 11, 206);
     cursor: pointer;
     z-index: 900;
 }

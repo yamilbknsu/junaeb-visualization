@@ -256,9 +256,12 @@ function getPaths(name) {
     return drawnStreets[name];
 }
 
-function animatePath(mapView, path, ipath = 0){
+function animatePath({mapView, 
+                    path, 
+                    ipath = 0,
+                    onEndFunction = () => undefined} = {}){
+    
     currentPath = path[ipath];
-    console.log(currentPath.properties.osmid);
     pathObject = mapView.g.selectAll('path')            
             .append('path')
             .datum(currentPath)
@@ -282,9 +285,7 @@ function animatePath(mapView, path, ipath = 0){
                 .on("end", function() {
                     d3.select(this).remove();
                     pathObject.remove();
-                    if (ipath < path.length - 1) {
-                        animatePath(mapView, path, ipath + 1);
-                    }
+                    onEndFunction(mapView, path, ipath);
                 })
             
 
