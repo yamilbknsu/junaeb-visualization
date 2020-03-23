@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.css' rel='stylesheet' />
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <!-- Stylesheets-->
+    <link rel="stylesheet" href="visualization.css">
+    <link rel="stylesheet" href="project.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="viz-container">
+    </div>
+
+    <div class="user-interface">
+        <div class="side-bar-container">
+            <div id="upper-side-bar">
+
+            </div>
+            <div id="activity-log">
+            </div>
+        </div>
+        <div id="footer-bar">
+            <span id="backend-state"></span>
+            <p id="backend-state-text">Backend Disconnected</p>
+            <a id="connect-link" href="#" onclick="openBackendConnection();">Connect</a>
+        </div>
+    </div>
+    <script src="MapVisualization.js"></script>
+    <script src="junaebViz.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>

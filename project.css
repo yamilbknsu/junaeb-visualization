@@ -1,0 +1,27 @@
+.student-static{
+    fill:rgb(44, 22, 107);
+    cursor: pointer;
+    z-index: 900;
+}
+
+.school{
+    fill:rgb(9, 126, 141);
+    stroke: rgb(39, 176, 194);
+    stroke-width: 1;
+    cursor: pointer;
+}
+
+.street{
+    fill: none;
+    opacity: .2;
+    stroke-width: 1px;
+    stroke: yellow;
+    cursor: default;
+}
+.street-route{
+    fill: none;
+    opacity: 1;
+    stroke-width: 2px;
+    /*stroke: green;*/
+    opacity: .7;
+}
