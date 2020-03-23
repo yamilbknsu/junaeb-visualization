@@ -41,8 +41,8 @@ Promise.all([d3.json('data/school_links.json'),
     students = data[2];
 
     route = routes['c4561'];
-    
-    sp = edges.features.filter(edge => route.includes(edge.properties.osmid));
+    sp = []
+    route.forEach(edgeID => sp.push(edges.features.find(edge => edge.properties.osmid == edgeID)))
     mapView.g.selectAll('path')
         .data(sp)
         .enter()

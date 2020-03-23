@@ -258,13 +258,13 @@ function getPaths(name) {
 
 function animatePath(mapView, path, ipath = 0){
     currentPath = path[ipath];
-    
+    console.log(currentPath.properties.osmid);
     pathObject = mapView.g.selectAll('path')            
             .append('path')
             .datum(currentPath)
             .attr("class", "street-route")
             .attr("d", d3Path);
-    console.log(pathObject.node())
+    //console.log(pathObject.node())
     
     mapView.g.append("circle")
                 .attr("class", "truck")
