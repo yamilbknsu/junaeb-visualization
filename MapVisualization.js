@@ -4,7 +4,7 @@ let gMainView;
 // Projection objects
 let d3Path;
 
-let simRatio = 10;
+let simRatio = 100;
 
 function newMapVisualization(centerCoords, // Coords object
     boundingBox, // List of two Coords objects [SW, NE]
