@@ -39,8 +39,17 @@ Promise.all([d3.json('data/school_links.json'),
     routes = data[0]; 
     edges = data[1];
     students = data[2];
-    console.log(students);
-    route = routes['c4561'];
+    
+    mapView.g.selectAll('circle.school')
+        .on('click', function(d) {
+            console.log(routes[d.properties.node_id]);
+            animateSchoolRoute(routes[d.properties.node_id], edges, students);
+        })
+
+    
+});
+
+function animateSchoolRoute(route, edges, students) {
     sp = []
     route.forEach(edgeID => sp.push(edges.features.find(edge => edge.properties.osmid == edgeID)))
     mapView.g.selectAll('path')
@@ -63,6 +72,7 @@ Promise.all([d3.json('data/school_links.json'),
                         .datum(student)
                         .attr("class", "student-static")
                         .attr("id", function (d) {
+                            console.log(d.properties.osmid);
                             return d.properties.osmid;
                         })
                         .attr("r", 5)
@@ -85,9 +95,7 @@ Promise.all([d3.json('data/school_links.json'),
                 );
     
     
-
-    
-});
+}
 
 
 /*
