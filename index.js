@@ -6,7 +6,7 @@ let wWidth = 1280,
 
 // Initialize important values
 init();
-
+//window.onresize = onWindowResize;
 // Initialize backend connection
 // openBackendConnection();
 
@@ -17,7 +17,7 @@ function init(){
     html_ids['activityLog'] = 'activity-log';
 
     backendUp = false;
-    onWindowResize();
+  //  onWindowResize();
 }
 
 function updateBackendState(heartBeat = false){

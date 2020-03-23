@@ -15,7 +15,7 @@ html, body{
     overflow: hidden;
 }
 
-#vizcontainer {
+#viz-container {
     height: 720px;
     width: 1280px;
     position: absolute;
