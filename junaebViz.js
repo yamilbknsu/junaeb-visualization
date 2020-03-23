@@ -33,7 +33,7 @@ var routes;
 //colors = ['#FF4500', '#E6E6FA', '#FFF0F5', '#FA8072', '#9400D3', '#87CEFA', '#FFFFF0', '#778899', '#F5F5DC']
 
 Promise.all([d3.json('data/school_links.json'),
-             d3.json('data/ccp_network_corrected_WGS84.geojson')],
+             d3.json('data/ccp_final_WGS84.geojson')],
              d3.json('data/students_ccp.geojson'))
 .then((data)=>{
     routes = data[0]; 
@@ -43,7 +43,7 @@ Promise.all([d3.json('data/school_links.json'),
     route = routes['c4561']
     
     sp = edges.features.filter(edge => route.includes(edge.properties.id))
-    
+    console.log(sp)
 
     animatePath(mapView, sp)
     
