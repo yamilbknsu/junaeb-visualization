@@ -17,7 +17,6 @@ function init(){
     html_ids['activityLog'] = 'activity-log';
 
     backendUp = false;
-
     onWindowResize();
 }
 
@@ -47,6 +46,7 @@ function onWindowResize(){
     $('.side-bar-container').css('height', (wHeight - 25) + 'px');
     $('#footer-bar').css('width', wWidth + 'px');
 }
+
 
 function addNewEventLog(title, text = ''){
     var log = document.getElementById(html_ids['activityLog']);

@@ -11,6 +11,17 @@
     cursor: pointer;
 }
 
+.truck{
+    fill:rgb(11, 206, 20);
+    cursor: pointer;
+    z-index: 900;
+}
+
+
+.school:hover {
+    fill:rgb(255, 231, 11);
+    stroke: rgb(184, 194, 39);
+}
 .street{
     fill: none;
     opacity: .2;
@@ -22,6 +33,6 @@
     fill: none;
     opacity: 1;
     stroke-width: 2px;
-    /*stroke: green;*/
+    stroke: rgb(126, 128, 0);
     opacity: .7;
 }

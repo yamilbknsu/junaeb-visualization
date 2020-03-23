@@ -1,7 +1,8 @@
 // Load map view
-mapView = newMapVisualization(new Coords(-36.8275, -73.0524), 
+mapView = newMapVisualization(new Coords(-36.8181067,-73.0488407), 
                              [new Coords(-37.4684,-73.2594), 
-                              new Coords(-36.4250, -72.6326)])
+                              new Coords(-36.4250, -72.6326)],
+                              zomm_level=14)
 /*
 drawStaticPoints({mapView: mapView,
                 data_path: 'data/students_ccp.geojson', 
@@ -30,26 +31,27 @@ drawStaticPoints({mapView: mapView,
 
 var routes;            
 //colors = ['#FF4500', '#E6E6FA', '#FFF0F5', '#FA8072', '#9400D3', '#87CEFA', '#FFFFF0', '#778899', '#F5F5DC']
-/*
+
 Promise.all([d3.json('data/school_links.json'),
-             d3.json('data/ccp_network_corrected_WGS84.geojson')])
+             d3.json('data/ccp_network_corrected_WGS84.geojson')],
+             d3.json('data/students_ccp.geojson'))
 .then((data)=>{
     routes = data[0]; 
     edges = data[1];
+    students = data[2];
+
+    route = routes['c4561']
     
-    Object.keys(routes).forEach((key) =>{
-        //console.log(key, edges.features.filter(feat => routes[key].includes(feat.properties.id)))
-        drawPathsFromObject({mapView: mapView,
-            collection: {features: edges.features.filter(feat => routes[key].includes(feat.properties.id))},
-            name: 'streets_' + key,
-            class_type: 'street-route',
-            attrs: {'id': (d,i) => 'street_' + key + '_' + d.properties.id,
-                    'stroke':'red'}});//colors[Math.floor(Math.random() * colors.length)]}});
-    });
+    sp = edges.features.filter(edge => route.includes(edge.properties.id))
+    
+
+    animatePath(mapView, sp)
+    
+    
 
     
 });
-*/
+
 
 /*
 drawPaths({mapView: mapView,

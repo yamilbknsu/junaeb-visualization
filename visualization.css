@@ -104,3 +104,25 @@ Some useful colors
     display: inline-block;
     color: rgb(97, 104, 211);
 }
+
+#timer {
+    margin: auto;
+    position: relative;
+    width: 100%;
+    height: 25%;
+    border: solid;
+    border-width: 2px 0px 0px 0px;
+    box-sizing: border-box; 
+    font-size: 20px; 
+}
+
+#timer-container {
+    text-align: center;
+    position: absolute;
+    width: 80%;
+    height: 20%;
+    top: 1em;
+    left:10%;
+    color: black;
+}
+

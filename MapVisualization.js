@@ -4,6 +4,8 @@ let gMainView;
 // Projection objects
 let d3Path;
 
+let simRatio = 10;
+
 function newMapVisualization(centerCoords, // Coords object
     boundingBox, // List of two Coords objects [SW, NE]
     zomm_level = 13,
@@ -251,4 +253,40 @@ function drawPathsFromObject({
 
 function getPaths(name) {
     return drawnStreets[name];
+}
+
+function animatePath(mapView, path, ipath = 0){
+    currentPath = path[ipath];
+
+    pathObject = mapView.g.selectAll('path')
+            .data([currentPath])
+            .enter()
+            .append('path')
+            .attr("class", "street-route")
+            .attr("d", d3Path);
+
+    mapView.g.append("circle")
+                .attr("class", "truck")
+                .attr("r", 2)
+                .transition()
+                .ease(d3.easeLinear)
+                .duration(currentPath.properties.time_secs * 1000 / simRatio)
+                .attrTween('transform', function() {
+                    return function (t) {
+                        var pathLength = pathObject.node().getTotalLength();
+                        var p = pathObject.node().getPointAtLength(t * pathLength);
+                        console.log(p)
+                        return "translate(" + p.x + ", " + p.y + ")";
+                    }
+                })
+                .on("end", function() {
+                    d3.select(this).remove();
+                    pathObject.remove();
+                    if (ipath < path.length - 1) {
+                        animatePath(mapView, path, ipath + 1);
+                    }
+                })
+
+    
+
 }
