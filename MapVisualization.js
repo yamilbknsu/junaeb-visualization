@@ -112,6 +112,7 @@ function reset() {
             });
     });
 
+    d3.selectAll('path').attr("d", d3Path);
     Object.keys(drawnStreets).forEach((key) => {
         drawnStreets[key]
             .attr('d', d3Path);
@@ -257,17 +258,17 @@ function getPaths(name) {
 
 function animatePath(mapView, path, ipath = 0){
     currentPath = path[ipath];
-
-    pathObject = mapView.g.selectAll('path')
-            .data([currentPath])
-            .enter()
+    
+    pathObject = mapView.g.selectAll('path')            
             .append('path')
+            .datum(currentPath)
             .attr("class", "street-route")
             .attr("d", d3Path);
-
+    console.log(pathObject.node())
+    
     mapView.g.append("circle")
                 .attr("class", "truck")
-                .attr("r", 2)
+                .attr("r", 3)
                 .transition()
                 .ease(d3.easeLinear)
                 .duration(currentPath.properties.time_secs * 1000 / simRatio)
@@ -275,7 +276,6 @@ function animatePath(mapView, path, ipath = 0){
                     return function (t) {
                         var pathLength = pathObject.node().getTotalLength();
                         var p = pathObject.node().getPointAtLength(t * pathLength);
-                        console.log(p)
                         return "translate(" + p.x + ", " + p.y + ")";
                     }
                 })
@@ -286,6 +286,7 @@ function animatePath(mapView, path, ipath = 0){
                         animatePath(mapView, path, ipath + 1);
                     }
                 })
+            
 
     
 

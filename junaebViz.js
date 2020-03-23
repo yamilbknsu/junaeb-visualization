@@ -40,12 +40,17 @@ Promise.all([d3.json('data/school_links.json'),
     edges = data[1];
     students = data[2];
 
-    route = routes['c4561']
+    route = routes['c4561'];
     
-    sp = edges.features.filter(edge => route.includes(edges.features.indexOf(edge)))
-    console.log(sp)
+    sp = edges.features.filter(edge => route.includes(edge.properties.osmid));
+    mapView.g.selectAll('path')
+        .data(sp)
+        .enter()
+        .append('path')
+        .attr("d", d3Path)
+        .attr("class", "street-route");
 
-    animatePath(mapView, sp)
+    animatePath(mapView, sp);
     
     
 
