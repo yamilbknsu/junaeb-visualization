@@ -49,8 +49,9 @@ Some useful colors
 #upper-side-bar{
     width: 100%;
     height: 30%;
-    background-color: #DDD;
-    opacity: .9;
+    background-color: #000817;
+    color: #DDD;
+    opacity: 1  ;
 }
 
 #activity-log{
@@ -123,6 +124,19 @@ Some useful colors
     height: 20%;
     top: 1em;
     left:10%;
-    color: black;
+
+}
+
+#controller {
+    padding: 10px;
+    display: inline;
+}
+
+.controller-button {
+    cursor: pointer;
+}
+
+.controller-button:hover {
+    color: gray;
 }
 

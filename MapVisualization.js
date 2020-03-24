@@ -6,6 +6,8 @@ let d3Path;
 
 let simRatio = 25;
 
+
+
 function newMapVisualization(centerCoords, // Coords object
     boundingBox, // List of two Coords objects [SW, NE]
     zomm_level = 13,

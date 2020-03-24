@@ -1,5 +1,12 @@
-.student-static{
+.student-served{
     fill:rgb(0, 206, 27);
+    cursor: pointer;
+    z-index: 900;
+    opacity: 0.6;
+}
+
+.student-unserved{
+    fill:rgb(206, 0, 0);
     cursor: pointer;
     z-index: 900;
     opacity: 0.6;
@@ -36,5 +43,5 @@
     opacity: 1;
     stroke-width: 2px;
     stroke: rgb(126, 128, 0);
-    opacity: .7;
+    opacity: .5;
 }
