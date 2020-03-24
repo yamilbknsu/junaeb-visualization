@@ -69,6 +69,7 @@ Some useful colors
     padding: 16px;
     padding-bottom: 16px;
     border-bottom: solid rgb(0, 0, 0) 2px;
+    color: black;
 }
 
 .event-log h4{
