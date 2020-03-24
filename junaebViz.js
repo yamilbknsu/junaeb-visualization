@@ -3,25 +3,11 @@ mapView = newMapVisualization(new Coords(-36.8181067,-73.0488407),
                              [new Coords(-37.4684,-73.2594), 
                               new Coords(-36.4250, -72.6326)],
                               zomm_level=14)
-/*
-drawStaticPoints({mapView: mapView,
-                data_path: 'data/students_ccp.geojson', 
-                name: 'students',
-                class_type:'student-static',
-                r: 3,
-                attrs: {'stroke': 'rgb(79, 56, 141)',
-                         'stroke-width': 1,
-                        'id': (d,i) => 'student_' + d.properties.osmid},
-                callback: () => {
-                    getPoints('students').append('title').text((d) => 
-                            'Student ID: ' + d.properties.osmid + '\n'
-                            +'Number of students: ' + d.properties.student_co)
-                }});
-*/
+
 drawStaticPoints({mapView: mapView,
                  data_path:'data/schools_ccp.geojson', 
                  name: 'schools',
-                 r: 5,
+                 r: 4,
                  class_type: 'school',
                 attrs:{'id': (d,i) => 'school_'+d.properties.node_id},
                 callback: () => {
@@ -42,9 +28,11 @@ Promise.all([d3.json('data/school_links.json'),
     
     mapView.g.selectAll('circle.school')
         .on('click', function(d) {
-            d3.selectAll('circle.student-static').remove()
-            d3.selectAll('path.street-route').remove()
-            d3.select("#school-display").html("School: " + d.properties.node_id)
+            pause().then(function() {
+                clear();
+            });
+            
+            d3.select("#school-display").html("School: " + d.properties.node_id);
             animateSchoolRoute(routes[d.properties.node_id], edges, students);
         })
 
@@ -52,6 +40,7 @@ Promise.all([d3.json('data/school_links.json'),
 });
 
 function animateSchoolRoute(route, edges, students) {
+    
     sp = []
     route.forEach(edgeID => sp.push(edges.features.find(edge => edge.properties.osmid == edgeID)))
     
@@ -62,6 +51,7 @@ function animateSchoolRoute(route, edges, students) {
         ipath
         ) => {
         if (ipath < path.length - 1) {
+            delay = 0
             endNode = path[ipath].properties.v;
             student = students.features.find(student => student.properties.osmid == endNode);
             if(typeof student !== "undefined"){
@@ -69,7 +59,6 @@ function animateSchoolRoute(route, edges, students) {
                         .datum(student)
                         .attr("class", "student-static")
                         .attr("id", function (d) {
-                            console.log(d.properties.osmid);
                             return d.properties.osmid;
                         })
                         .attr('cx', function (d) {
@@ -80,11 +69,16 @@ function animateSchoolRoute(route, edges, students) {
                             return map.latLngToLayerPoint([coor[1], coor[0]]).y;
                         })
                         .transition()
-                        .duration(1000)
+                        .duration(250)
                         .attr("r", 3)
-                console.log("new student")
             } 
-            animatePath({mapView: mapView, path: path, ipath: ipath + 1, onEndFunction: animateNextPath});
+            
+            animatePath({mapView: mapView, 
+                         path: path, 
+                         ipath: ipath + 1,  
+                         onEndFunction: animateNextPath});
+            
+            
 
         }
     }
@@ -96,7 +90,25 @@ function animateSchoolRoute(route, edges, students) {
     
 }
 
+function pause() {
+    return new Promise(function(resolve, reject) {
+        console.log('Pause')
+        d3.selectAll('circle.truck').interrupt();
+        d3.selectAll('circle.student-static').interrupt();
+        d3.selectAll('path.street-route').interrupt();
+        resolve();
+    })
+}
 
+function clear() {
+    return new Promise(function(resolve, reject) {
+        console.log('Clear View')
+        d3.selectAll('circle.truck').remove();
+        d3.selectAll('circle.student-static').remove();
+        d3.selectAll('path.street-route').remove();
+        resolve();
+    })
+}
 /*
 drawPaths({mapView: mapView,
     data_path:'static/project_specific/data/ccp_network_corrected_WGS84.geojson',

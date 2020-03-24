@@ -272,32 +272,38 @@ function animatePath({mapView,
                     onEndFunction = () => undefined} = {}){
     
     currentPath = path[ipath];
-    console.log(currentPath)
+    
     pathObject = mapView.g.append('path')
                             .datum(currentPath)
                             .attr("class", edgeClass)
                             .attr("d", d3Path);
     //console.log(pathObject.node())
     
-    mapView.g.append("circle")
-                .attr("class", pointClass)
-                .attr("r", 3)
+   
+    circle = mapView.g.append("circle")
+                        .attr("class", pointClass)
+                        .attr("r", 3)
+                        .attr("transform", function() {
+                            var p =  pathObject.node().getPointAtLength(0);
+                            return "translate(" + p.x + ", " + p.y + ")";
+                        })
                 .transition()
-                .ease(d3.easeLinear)
-                .duration(currentPath.properties.time_secs * 1000 / simRatio)
-                .attrTween('transform', function() {
-                    return function (t) {
-                        var pathLength = pathObject.node().getTotalLength();
-                        var p = pathObject.node().getPointAtLength(t * pathLength);
-                        pathObject.style("opacity", t);
-                        return "translate(" + p.x + ", " + p.y + ")";
-                    }
-                })
-                .on("end", function() {
-                    d3.select(this).remove();
-                    //pathObject.remove();
-                    onEndFunction(mapView, path, ipath);
-                })
+                    .ease(d3.easeLinear)
+                    .duration(currentPath.properties.time_secs * 1000 / simRatio)
+                    .attrTween('transform', function() {
+                        return function (t) {
+                            var pathLength = pathObject.node().getTotalLength();
+                            var p = pathObject.node().getPointAtLength(t * pathLength);
+                            pathObject.style("opacity", t);
+                            return "translate(" + p.x + ", " + p.y + ")";
+                        }
+                    })
+                    .on("end", function() {
+                        //pathObject.remove();
+                        d3.select(this).remove();
+                        onEndFunction(mapView, path, ipath);
+                        
+                    })
             
 
     
