@@ -5,7 +5,7 @@ mapView = newMapVisualization(new Coords(-36.8181067,-73.0488407),
                               zomm_level=14)
 
 $("#clear-button").on("click", clear);
-
+let timer;
 drawStaticPoints({mapView: mapView,
                  data_path:'data/schools_ccp.geojson', 
                  name: 'schools',
@@ -33,10 +33,14 @@ Promise.all([d3.json('data/school_links.json'),
     mapView.g.selectAll('circle.school')
         .on('click', function(d) {
             pause().then(clear).then(function () {
+                if (typeof(timer) !== "undefined") {
+                    timer.stop();
+                }
                 schoolAssignments = assignments[d.properties.node_id]
                 projectAssignments(schoolAssignments, students);
                 d3.select("#school-display").html("School: " + d.properties.node_id);
                 d3.select("#play-button").on("click", function () {
+                    
                     timer = startTimer();
                     animateSchoolRoute(routes[d.properties.node_id], edges, schoolAssignments, timer);
                 });
