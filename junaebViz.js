@@ -2,6 +2,7 @@
 mapView = newMapVisualization(new Coords(-36.8181067,-73.0488407), 
                              [new Coords(-37.4684,-73.2594), 
                               new Coords(-36.4250, -72.6326)],
+                              load_callback = overlayInAnimations,
                               zomm_level=14)
 
 $("#clear-button").on("click", clear);
@@ -17,8 +18,7 @@ drawStaticPoints({mapView: mapView,
                             'School ID: ' + d.properties.node_id)
                 }});
 
-var routes;            
-//colors = ['#FF4500', '#E6E6FA', '#FFF0F5', '#FA8072', '#9400D3', '#87CEFA', '#FFFFF0', '#778899', '#F5F5DC']
+var routes;
 
 Promise.all([d3.json('data/school_links.json'),
              d3.json('data/ccp_final_WGS84.geojson'),
@@ -131,10 +131,37 @@ function clear() {
         resolve();
     })
 }
-/*
-drawPaths({mapView: mapView,
-    data_path:'static/project_specific/data/ccp_network_corrected_WGS84.geojson',
-    name: 'streets',
-    class_type: 'street',
-    attrs: {'id': (d,i) => 'street_' + d.properties.id}/*,
-callback: highlightRoutes});*/
+
+function overlayInAnimations(){
+    d3.select('#overlay-header')
+      .transition()
+      .duration(400)
+      .style('opacity', 1);
+    
+    d3.select('#overlay-buttons')
+      .transition()
+      .duration(400)
+      .style('opacity', 1);
+}
+
+function overlayOutAnimations(){
+    exitDuration = 500;
+
+    // Hide the panel
+    d3.select('#overlay-panel')
+      .transition()
+      .duration(exitDuration)
+      .style('opacity', 0)
+      .on('end', ()=> d3.select('#overlay-panel').style('display', 'none'));
+
+    // Show side panel and footer
+    d3.select('.side-bar-container')
+      .transition()
+      .duration(exitDuration)
+      .style('width', '300px');
+    
+    d3.select('#footer-bar')
+      .transition()
+      .duration(exitDuration)
+      .style('bottom', '0px');
+}

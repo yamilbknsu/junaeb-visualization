@@ -10,6 +10,7 @@ let simRatio = 25;
 
 function newMapVisualization(centerCoords, // Coords object
     boundingBox, // List of two Coords objects [SW, NE]
+    load_callback = () => 1,
     zomm_level = 13,
     containerID = '#viz-container',
     tileFunction = getTileURL,
@@ -21,7 +22,9 @@ function newMapVisualization(centerCoords, // Coords object
     // Initializing leaflet map object
     map = L.map('map', {
         zoomControl: false
-    }).setView([centerCoords.lat, centerCoords.lng], zomm_level);
+    });
+    map.on('load', load_callback);
+    map.setView([centerCoords.lat, centerCoords.lng], zomm_level);
 
     // Adding tiles to the map
     var tileURL = tileFunction(tileMode);
