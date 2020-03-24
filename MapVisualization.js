@@ -274,7 +274,8 @@ function animatePath({mapView,
                     onEndFunction = () => undefined} = {}){
     
     currentPath = path[ipath];
-    
+    time = $("#timer").html();
+    addNewEventLog(title=time + " | Calle", text="ID: " + currentPath.properties.osmid);
     pathObject = mapView.g.append('path')
                             .datum(currentPath)
                             .attr("class", edgeClass)
@@ -310,4 +311,18 @@ function animatePath({mapView,
 
     
 
+}
+
+function startTimer() {
+    var t = d3.timer(function (elapsed) {
+        
+        var realMili = simRatio * elapsed;
+        var minutes = Math.floor(realMili / (60000));
+        var miliseconds = realMili % (60000);
+        var seconds = Math.floor(miliseconds / 1000);
+
+        returnStr = ('0' + minutes).slice(-2) + ":" + ('0' + seconds).slice(-2);
+        $("#timer").html(returnStr);
+    }, 100)
+    return t;
 }

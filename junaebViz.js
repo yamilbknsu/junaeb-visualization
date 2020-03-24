@@ -37,7 +37,8 @@ Promise.all([d3.json('data/school_links.json'),
                 projectAssignments(schoolAssignments, students);
                 d3.select("#school-display").html("School: " + d.properties.node_id);
                 d3.select("#play-button").on("click", function () {
-                    animateSchoolRoute(routes[d.properties.node_id], edges, schoolAssignments);
+                    timer = startTimer();
+                    animateSchoolRoute(routes[d.properties.node_id], edges, schoolAssignments, timer);
                 });
                 
             });
@@ -66,7 +67,7 @@ function projectAssignments(schoolAssignments, students) {
             .attr("r", 3);
 }
 
-function animateSchoolRoute(route, edges, assignments) {
+function animateSchoolRoute(route, edges, assignments, timer=undefined) {
     
     sp = []
     route.forEach(edgeID => sp.push(edges.features.find(edge => edge.properties.osmid == edgeID)))
@@ -81,9 +82,11 @@ function animateSchoolRoute(route, edges, assignments) {
             delay = 0
             endNode = path[ipath].properties.v;
             if(assignments.includes(endNode)){
+                time = $("#timer").html();
+                addNewEventLog(title=time + " | Estudiante", text="ID: " + endNode);
                 d3.select("circle#s" + endNode)
                     .attr("class", "student-served");
-            } 
+            }
             
             animatePath({mapView: mapView, 
                          path: path, 
@@ -92,6 +95,8 @@ function animateSchoolRoute(route, edges, assignments) {
             
             
 
+        } else {
+            timer.stop();
         }
     }
     animatePath({mapView: mapView,
