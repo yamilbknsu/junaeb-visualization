@@ -115,7 +115,7 @@ function reset() {
     });
 
     d3.selectAll('path').attr("d", d3Path);
-    d3.selectAll('cirle.student-static')
+    d3.selectAll('circle')
                 .attr('cx', function (d) {
                     coor = d.geometry.coordinates
                     return map.latLngToLayerPoint([coor[1], coor[0]]).x;
