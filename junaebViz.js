@@ -1,3 +1,8 @@
+
+var routes;  // Useless?
+let timer, animation_selected;
+$("#clear-button").on("click", clear);
+
 // Load map view
 mapView = newMapVisualization(new Coords(-36.8181067,-73.0488407), 
                              [new Coords(-37.4684,-73.2594), 
@@ -5,8 +10,6 @@ mapView = newMapVisualization(new Coords(-36.8181067,-73.0488407),
                               load_callback = overlayInAnimations,
                               zomm_level=14)
 
-$("#clear-button").on("click", clear);
-let timer;
 drawStaticPoints({mapView: mapView,
                  data_path:'data/schools_ccp.geojson', 
                  name: 'schools',
@@ -18,37 +21,56 @@ drawStaticPoints({mapView: mapView,
                             'School ID: ' + d.properties.node_id)
                 }});
 
-var routes;
+function prepareAnimation(){
+    Promise.all([d3.json('data/school_links.json'),
+                 d3.json('data/ccp_WGS84.geojson'),
+                 d3.json('data/students_agg_ccp.geojson'),
+                 d3.json('data/school_agg_assignments.json'),
+                 d3.json('data/students_paths.json'),
+                 d3.json('data/school_student_assignment.json'),
+                 d3.json('data/students_ccp.geojson')])
+            .then((data)=>{
+                routes = data[0]; 
+                edges = data[1];
+                students_agg = data[2];
+                assignments_agg = data[3];
 
-Promise.all([d3.json('data/school_links.json'),
-             d3.json('data/ccp_final_WGS84.geojson'),
-             d3.json('data/students_ccp.geojson'),
-            d3.json('data/school_student_assignments.json')])
-.then((data)=>{
-    routes = data[0]; 
-    edges = data[1];
-    students = data[2];
-    assignments = data[3];
-    
-    mapView.g.selectAll('circle.school')
-        .on('click', function(d) {
-            pause().then(clear).then(function () {
-                if (typeof(timer) !== "undefined") {
-                    timer.stop();
-                }
-                schoolAssignments = assignments[d.properties.node_id]
-                projectAssignments(schoolAssignments, students);
-                d3.select("#school-display").html("School: " + d.properties.node_id);
-                d3.select("#play-button").on("click", function () {
-                    
-                    timer = startTimer();
-                    animateSchoolRoute(routes[d.properties.node_id], edges, schoolAssignments, timer);
-                });
+                students_path = data[4];
+                assignments_student = data[5];
+                students = data[6];
                 
-            });
+                mapView.g.selectAll('circle.school')
+                    .on('click', function(d) {
+                        pause().then(clear).then(function () {
+                            if (typeof(timer) !== "undefined") {
+                                timer.stop();
+                            }
+                            if(animation_selected == 1){
+                                schoolAssignments = assignments_agg[d.properties.node_id]
+                                projectAssignments(schoolAssignments, students_agg);
+                            }else if(animation_selected == 2){
+                                schoolAssignments = assignments_student[d.properties.node_id]
+                                projectAssignments(schoolAssignments, students);
+                            }                           
 
-        });
-});
+
+                            d3.select("#school-display").html("School: " + d.properties.node_id);
+                            d3.select("#play-button").on("click", function () {
+                                
+                                timer = startTimer();
+                                if(animation_selected == 1){
+                                    animateSchoolRoute(routes[d.properties.node_id], edges, schoolAssignments, timer);
+                                }else if(animation_selected == 2){
+                                    animateStudentsWalk(students_path[d.properties.node_id], edges, assignments_student, timer);
+                                }
+                            });
+                            
+                        });
+
+                    });
+            });
+}
+
 
 function projectAssignments(schoolAssignments, students) {
     assignedStudentsFeature = students.features.filter(student => schoolAssignments.includes(student.properties.node_id))
@@ -111,6 +133,37 @@ function animateSchoolRoute(route, edges, assignments, timer=undefined) {
     
 }
 
+function animateStudentsWalk(routes, edges, timer){
+    Object.entries(routes).forEach((route) => {
+        school_id = route[0];
+        sp_ids = route[1];
+
+        sp = []
+        sp_ids.forEach(edgeID => sp.push(edges.features.find(edge => edge.properties.osmid == edgeID)))
+        
+        // this function is project-specific thats why is here.
+        animateNextPath = (
+            mapView,
+            path,
+            ipath
+            ) => {
+            if (ipath < path.length - 1) {
+                delay = 0;
+                animatePath({mapView: mapView, 
+                            path: path, 
+                            ipath: ipath + 1,  
+                            onEndFunction: animateNextPath});
+            } else {
+                //timer.stop();
+            }
+        }
+        animatePath({mapView: mapView,
+                    path: sp,
+                    onEndFunction: animateNextPath}
+                    );
+        });
+}
+
 function pause() {
     return new Promise(function(resolve, reject) {
         console.log('Pause')
@@ -144,7 +197,8 @@ function overlayInAnimations(){
       .style('opacity', 1);
 }
 
-function overlayOutAnimations(){
+function overlayOutAnimations(mode_selected){
+    animation_selected = mode_selected;
     exitDuration = 500;
 
     // Hide the panel
@@ -164,4 +218,6 @@ function overlayOutAnimations(){
       .transition()
       .duration(exitDuration)
       .style('bottom', '0px');
+    
+      prepareAnimation();
 }

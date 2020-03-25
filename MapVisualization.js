@@ -187,88 +187,6 @@ function getPoints(name) {
     return drawnPoints[name];
 }
 
-function drawPathsFromFile({
-    mapView,
-    data_path,
-    name = '',
-    class_type = '',
-    attrs = {},
-    style = {},
-    callback = () => undefined
-} = {}) {
-    if (class_type === '') {
-        class_type = 'element' + drawnElements.length;
-    }
-    if (name === '') {
-        name = 'element' + drawnElements.length;
-    }
-
-    Promise.all([d3.json(data_path)])
-        .then((data) => {
-            collection = data[0];
-            paths = mapView.g.selectAll('path.' + class_type)
-                .data(collection.features)
-                .enter()
-                .append('path')
-                .attr('class', class_type)
-                .attr('d', d3Path);
-
-            Object.keys(attrs).forEach((key) => {
-                paths.attr(key, attrs[key]);
-            });
-
-            Object.keys(style).forEach((key) => {
-                paths.style(key, style[key]);
-            });
-
-            drawnStreets[name] = paths;
-            reset(mapView);
-        })
-        .then(callback);
-}
-
-
-function drawPathsFromObject({
-    mapView,
-    collection,
-    name = '',
-    class_type = '',
-    attrs = {},
-    style = {},
-    callback = () => undefined} = {}) {
-
-    if (class_type === '') {
-        class_type = 'element' + drawnElements.length;
-    }
-    if (name === '') {
-        name = 'element' + drawnElements.length;
-    }
-
-    paths = mapView.g.selectAll('path.' + class_type)
-        .data(collection.features)
-        .enter()
-        .append('path')
-        .attr('class', class_type)
-        .attr('d', d3Path);
-
-    Object.keys(attrs).forEach((key) => {
-        paths.attr(key, attrs[key]);
-    });
-
-    Object.keys(style).forEach((key) => {
-        paths.style(key, style[key]);
-    });
-
-    drawnStreets[name] = paths;
-    reset(mapView);
-
-    callback();
-}
-
-function getPaths(name) {
-    return drawnStreets[name];
-}
-
 function animatePath({mapView, 
                     path,
                     pointClass = 'truck',
@@ -310,10 +228,6 @@ function animatePath({mapView,
                         onEndFunction(mapView, path, ipath);
                         
                     })
-            
-
-    
-
 }
 
 function startTimer() {

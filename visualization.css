@@ -56,6 +56,35 @@ svg {
     color:white;
 }
 
+#overlay-region{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overlay-region-button{
+    display: inline-flex;
+    font-family: 'Roboto';
+    color: white;
+    font-size: 18px;
+    line-height: 40px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.overlay-region-button-body{
+    border-radius: 20px;
+    background-color: rgba(255,255,255,0);
+    cursor: pointer;
+    margin: 20px;
+}
+
+.overlay-region-button-body:hover{
+    background-color: rgba(255,255,255,0.2);
+}
+
+
+
 #overlay-buttons{
     display: flex;
     align-items: center;
@@ -69,6 +98,7 @@ svg {
     display: inline-flex;
     margin: 20px;
     transform: translateY(-50%);
+    cursor: pointer;
 }
 
 .overlay-image{
