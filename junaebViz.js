@@ -1,14 +1,16 @@
 
-var routes;  // Useless?
+var routes;  // Useless?; YES
 let timer, animation_selected;
+
 $("#clear-button").on("click", clear);
+$("#pause-button").on("click", pause);
 
 // Load map view
 mapView = newMapVisualization(new Coords(-36.8181067,-73.0488407), 
                              [new Coords(-37.4684,-73.2594), 
                               new Coords(-36.4250, -72.6326)],
                               load_callback = overlayInAnimations,
-                              zomm_level=14)
+                              zomm_level=12)
 
 drawStaticPoints({mapView: mapView,
                  data_path:'data/schools_ccp.geojson', 
@@ -41,11 +43,16 @@ function prepareAnimation(){
                 
                 mapView.g.selectAll('circle.school')
                     .on('click', function(d) {
+                        animation_selected = parseInt($("#strategy-selector").val());
+                        console.log(animation_selected);
                         pause().then(clear).then(function () {
                             if (typeof(timer) !== "undefined") {
                                 timer.stop();
                             }
-                            if(animation_selected == 1){
+                            if (animation_selected == 0){
+                                alert("Debes seleccionar una estrategia!");
+                            }
+                            else if(animation_selected == 1){
                                 schoolAssignments = assignments_agg[d.properties.node_id]
                                 projectAssignments(schoolAssignments, students_agg);
                             }else if(animation_selected == 2){
@@ -58,6 +65,7 @@ function prepareAnimation(){
                             d3.select("#play-button").on("click", function () {
                                 
                                 timer = startTimer();
+                                
                                 if(animation_selected == 1){
                                     animateSchoolRoute(routes[d.properties.node_id], edges, schoolAssignments, timer);
                                 }else if(animation_selected == 2){
@@ -134,6 +142,7 @@ function animateSchoolRoute(route, edges, assignments, timer=undefined) {
 }
 
 function animateStudentsWalk(routes, edges, timer){
+    var ended = 0;
     Object.entries(routes).forEach((route) => {
         school_id = route[0];
         sp_ids = route[1];
@@ -142,6 +151,10 @@ function animateStudentsWalk(routes, edges, timer){
         sp_ids.forEach(edgeID => sp.push(edges.features.find(edge => edge.properties.osmid == edgeID)))
         
         // this function is project-specific thats why is here.
+        /* Creo que para hacer esto vamos a tener que hacer que la función animatePath retorne una promesa.
+        El problema es que no se como meter eso con la recusrividad. La otra opción es ocupar queue defer, que como dije
+        por el grupo está deprecated. Also, creo que los paths están como el pic again.
+        */
         animateNextPath = (
             mapView,
             path,
@@ -154,11 +167,16 @@ function animateStudentsWalk(routes, edges, timer){
                             ipath: ipath + 1,  
                             onEndFunction: animateNextPath});
             } else {
-                //timer.stop();
+                ended++;
+                if (ended == routes.length) {
+                    console.log('All Routes Ended');
+                    timer.stop();
+                }
             }
         }
         animatePath({mapView: mapView,
                     path: sp,
+                    pointClass: 'student-unserved',
                     onEndFunction: animateNextPath}
                     );
         });

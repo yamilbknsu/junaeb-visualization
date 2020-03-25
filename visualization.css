@@ -37,7 +37,7 @@ svg {
 /* UI elements */
 /* Starting overlay */
 #overlay-panel{
-    background-color: rgba(0, 0, 0, .75);
+    background-color: rgba(0, 0, 0, 0.85);
     opacity: .999;
     width: 100%;
     height: 100%;
@@ -192,7 +192,7 @@ svg {
 }
 
 #timer {
-    margin: auto;
+    margin: 0px auto;
     position: relative;
     width: 100%;
     height: 25%;
@@ -213,15 +213,35 @@ svg {
 }
 
 #controller {
-    padding: 10px;
     display: inline;
 }
 
 .controller-button {
     cursor: pointer;
+    padding: 0px;
+    margin: 10px 10px;
+    position: relative;
 }
 
 .controller-button:hover {
     color: gray;
 }
 
+.selector {
+    margin: 10px;
+    color: white;
+    background-color: rgb(17, 0, 95);
+    cursor: pointer;
+    border: none;
+    width: 150px;
+    height: 30px;
+    padding: 4px 10px;
+}
+
+#school-display {
+    margin: 10px auto;
+}
+#display {
+    margin: 0;
+    padding: 0;
+}
