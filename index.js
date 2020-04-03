@@ -12,8 +12,6 @@ window.onresize = onWindowResize;
 
 function init(){
     html_ids = {}
-    html_ids['backendState'] = 'backend-state';
-    html_ids['backendStateText'] = 'backend-state-text';
     html_ids['activityLog'] = 'activity-log';
 
     backendUp = false;
@@ -39,11 +37,11 @@ function updateBackendState(heartBeat = false){
 }
 
 function onWindowResize(){
-    wWidth = window.innerWidth;
-    wHeight = window.innerHeight;
+    wWidth = $('#viz-wrapper').width();
+    wHeight = $('#viz-wrapper').height();
 
     $('#viz-container').css({'height': wHeight + 'px', 'width': wWidth + 'px'});
-    $('.side-bar-container').css('height', (wHeight - 25) + 'px');
+    $('.side-bar-container').css('height', wHeight  + 'px');
     $('#footer-bar').css('width', wWidth + 'px');
 }
 

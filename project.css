@@ -40,8 +40,14 @@
 }
 .street-route{
     fill: none;
-    opacity: 1;
     stroke-width: 2px;
     stroke: rgb(126, 128, 0);
     opacity: .5;
+}
+
+.street-invisible{
+    fill: none;
+    opacity: 0;
+    stroke-width: 0px;
+    stroke: rgb(0, 0, 0);
 }

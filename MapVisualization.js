@@ -189,6 +189,7 @@ function getPoints(name) {
 
 function animatePath({mapView, 
                     path,
+                    id = 'route',
                     pointClass = 'truck',
                     edgeClass = 'street-route', 
                     ipath = 0,
@@ -196,17 +197,19 @@ function animatePath({mapView,
     
     currentPath = path[ipath];
     time = $("#timer").html();
-    addNewEventLog(title=time + " | Calle", text="ID: " + currentPath.properties.osmid);
-    pathObject = mapView.g.append('path')
+    //addNewEventLog(title=time + " | Calle", text="ID: " + currentPath.properties.osmid);
+    var pathObject = mapView.g.append('path')
                             .datum(currentPath)
                             .attr("class", edgeClass)
-                            .attr("d", d3Path);
+                            .attr("d", d3Path)
+                            .attr('id', 'path_' + ipath + '_' + id);
     //console.log(pathObject.node())
     
    
-    circle = mapView.g.append("circle")
+    var circle = mapView.g.append("circle")
                         .attr("class", pointClass)
                         .attr("r", 3)
+                        .attr('id', 'circle_' + id)
                         .attr("transform", function() {
                             var p =  pathObject.node().getPointAtLength(0);
                             return "translate(" + p.x + ", " + p.y + ")";
@@ -225,7 +228,7 @@ function animatePath({mapView,
                     .on("end", function() {
                         //pathObject.remove();
                         d3.select(this).remove();
-                        onEndFunction(mapView, path, ipath);
+                        onEndFunction(mapView, path, ipath, edgeClass);
                         
                     })
 }

@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans|Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
 
 * {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Raleway';
 }
 
 /* Make scrollbar transparent */
@@ -14,15 +15,65 @@
 html, body{
     overflow: hidden;
     height: 100%;
+    width: 100%;
+
+    --button-size: 45px;
+    --viz-side-margin: 10%;
+
+    --background-color: #272838;
+    --dark-accent: #7d6b91;
+    --light-accent: #989fce;
+    --dull-accent: #5d536b;
+    --accent: #347fc4;
+    --accent-alternative: #0266c4;
+    --accent--bright: #0084ff;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--background-color);
+}
+
+#page-header{
+    height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 16px;
+    margin-top: 24px;
+}
+
+#page-header > h1{
+    font-family: 'Raleway', sans-serif;
+    color: var(--dark-accent);
 }
 
 /* Visualization elements*/
+#viz-wrapper{
+    border: 2px var(--light-accent) solid;
+    box-sizing: border-box;
+    flex:1;
+    margin-left: var(--viz-side-margin);
+    margin-right: var(--viz-side-margin);
+    margin-bottom: 1%;
+    overflow: hidden;
+}
 
 #viz-container {
     height: 720px;
     width: 1280px;
     position: absolute;
+    background-color: black;
+}
 
+#bottom-panel{
+    height: 80px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 }
 
 #map {
@@ -34,7 +85,49 @@ svg {
     position: relative;
 }
 
-/* UI elements */
+/* UI elements */ 
+/* Control buttons */
+#control-buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.control-button{
+    width: var(--button-size);
+    height: var(--button-size);
+    margin: 12px;
+    text-align: center;
+    background-color: var(--accent-alternative);
+    border-radius: 50%;
+    line-height: var(--button-size);
+    cursor: pointer;
+    transition: .5s;
+}
+
+.btn-disabled{
+    background-color: grey;
+    cursor: auto;
+}
+
+.control-button:hover{
+    background-color: var(--accent--bright);
+    color: white;
+}
+
+.btn-disabled:hover{
+    background-color: grey;
+    cursor: auto;
+    color: black;
+}
+
+#animation-setup{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 15px;
+}
+
 /* Starting overlay */
 #overlay-panel{
     background-color: rgba(0, 0, 0, 0.85);
@@ -43,75 +136,63 @@ svg {
     height: 100%;
     display: flex;
     flex-direction: column;
-}
-
-#overlay-header{
-    padding-top: 100px;
-    padding-bottom:100px;
-    text-align: center;
-    opacity: 0;
-}
-
-#overlay-header h1{
-    color:white;
-}
-
-#overlay-region{
-    display: flex;
-    align-items: center;
     justify-content: center;
 }
 
-.overlay-region-button{
-    display: inline-flex;
-    font-family: 'Roboto';
+#region-title{
     color: white;
-    font-size: 18px;
-    line-height: 40px;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-.overlay-region-button-body{
-    border-radius: 20px;
-    background-color: rgba(255,255,255,0);
-    cursor: pointer;
-    margin: 20px;
-}
-
-.overlay-region-button-body:hover{
-    background-color: rgba(255,255,255,0.2);
-}
-
-
-
-#overlay-buttons{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: row;
-    flex-grow: 1;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    transform: translateY(100px);
     opacity: 0;
 }
 
-.overlay-button{
-    display: inline-flex;
-    margin: 20px;
-    transform: translateY(-50%);
-    cursor: pointer;
+#strategy-title{
+    color: white;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    transform: translateY(100px);
+    opacity: 0;
 }
 
-.overlay-image{
-    width: 300px;
-    height: 200px;
-    border: rgb(241, 188, 14) 2.5px solid;
-    border-radius: 40px;
+/* Animation Overlay */
+#user-interface{
+    position: absolute;
+    margin-top: 16px;
+    right: calc(var(--viz-side-margin) + 20px);
+    border-radius: 20px;
     overflow: hidden;
-    background-color: black;
+    transform: translateY(-100px);
+    opacity: 0;
 }
 
-.overlay-button:hover .overlay-image{
-    opacity: .5;
+#school-panel{
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+    background-color: rgba(20,20,20, .90);
+}
+
+#school-panel h2{
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.overlay-info{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: white;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-right: 12px;
+    margin-left: 12px;
+}
+
+.overlay-info > p{
+    font-family: 'Roboto', sans-serif;
 }
 
 /* Sidebar */
@@ -212,27 +293,14 @@ svg {
 
 }
 
-#controller {
-    display: inline;
-}
 
-.controller-button {
-    cursor: pointer;
-    padding: 0px;
-    margin: 10px 10px;
-    position: relative;
-}
-
-.controller-button:hover {
-    color: gray;
-}
 
 .selector {
     margin: 10px;
     color: white;
+    border-radius: 2px;
     background-color: rgb(17, 0, 95);
     cursor: pointer;
-    border: none;
     width: 150px;
     height: 30px;
     padding: 4px 10px;

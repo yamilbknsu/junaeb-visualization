@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,79 +10,95 @@
     <link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.css' rel='stylesheet' />
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    
 
     <!-- Stylesheets-->
     <link rel="stylesheet" href="visualization.css">
     <link rel="stylesheet" href="project.css">
+    <link rel="stylesheet" href="project/selector.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <title>Document</title>
 </head>
+
 <body>
-    <div id="viz-container">
+    <div id='page-header'>
+        <h1>Visualizando distintas alternativas de entrega de alimentos</h1>
+        <div id="animation-setup">
+            <div class='custom-select'>
+                <select class="selector" id="region-selector" onchange="onRegionChanged(this.selectedIndex);">
+                    <option value=0>-- Region --</option>
+                    <option value=1>Bio-bio</option>
+                    <option value=2>Ñuble</option>
+                </select>
+            </div>
+            <div class='custom-select'>
+                <select class="selector" id="strategy-selector" onchange="onStrategyChanged(this.selectedIndex);">
+                    <option value=0>-- Estrategia --</option>
+                    <option value=1>Estrategia 1</option>
+                    <option value=2>Estrategia 2</option>
+                    <option value=3>Estrategia 3</option>
+                </select>
+            </div>
+        </div>
     </div>
+    <div id="viz-wrapper">
+        <div id="viz-container">
+        </div>
+        <div id='user-interface'>
+            <div id="school-panel">
+                <h3 style='color:white; margin-bottom: 10px; margin: 16px;'>Escuela seleccionada</h3>
+                <h2 id="school-title"></h2>
+                <div class="overlay-info">
+                    <p>Estudiantes:</p>
+                    <p id='student-amount-indicator'>0/0</p>
+                </div>
+                <div class="overlay-info">
+                    <p>Tiempo de recorrido:</p>
+                    <p id='total-time-indicator'>15:04</p>
+                </div>
+            </div>
+        </div>
+        <!--
+        <div class="user-interface">
+            <div class="side-bar-container">
+                <div id="upper-side-bar">
+                    <div id="timer-container">
+                        <span id="time-label" class="control-panel-text big">Time</span>
+                        <h3 class="control-panel-text" id="timer">00:00</h3>
+                        <div id="display">
+                            <h3 id="school-display"></h3>
+                            <div id="controller">
+                                <span class="controller-button" id="play-button">Play</span>
+                                <span class="controller-button" id="pause-button">Pause</span>
+                                <span class="controller-button" id="clear-button" onclick="clear();">Clear</span>
+                            </div>
 
-    <div class="user-interface">
-        <div class="side-bar-container">
-            <div id="upper-side-bar">
-                <div id="timer-container">
-                    <span id="time-label" class="control-panel-text big">Time</span>
-                    <h3 class="control-panel-text" id="timer">00:00</h3>
-                    <div id="display">
-                        <h3 id="school-display"></h3>
-                        <div id="controller">
-                            <span class="controller-button" id="play-button">Play</span>
-                            <span class="controller-button" id="pause-button">Pause</span>
-                            <span class="controller-button" id="clear-button" onclick="clear();">Clear</span>
-
-                            <select class="selector" id="strategy-selector">
-                            <option value=0>-- Estrategia --</option>
-                            <option value=1>Estrategia 1</option>
-                            <option value=2>Estrategia 2</option>
-                            <option value=3>Estrategia 3</option>
-                            </select>
                         </div>
-                        
                     </div>
-            </div>
-            </div>
-            <div id="activity-log">
+                </div>
+                <div id="activity-log">
+                </div>
             </div>
         </div>
-        <div id="footer-bar">
-            <span id="backend-state"></span>
-            <p id="backend-state-text">Backend Disconnected</p>
-            <a id="connect-link" href="#" onclick="openBackendConnection();">Connect</a>
+        -->
+        <div id="overlay-panel">
+            <h1 id='region-title'>Elige una región</h1>
+            <h1 id='strategy-title'>Elige una estrategia</h1>
         </div>
     </div>
 
-    <div id="overlay-panel">
-        <div id="overlay-header">
-            <h1>Estrategias de distribución de alimentos</h2>
-        </div>
-        <div id="overlay-region">
-            <div class="overlay-region-button-body">
-                <div class="overlay-region-button">
-                    BIO-BIO
-                </div>
-            </div>
-            <div class="overlay-region-button-body">
-                <div class="overlay-region-button">
-                    ÑUBLE
-                </div>
-            </div>
-        </div>
-        <div id="overlay-buttons">
-            <div class="overlay-button"  onclick="overlayOutAnimations(1);">
-                <span class="overlay-button-border"></span>
-                <div class="overlay-image"><img src="figs/school-route.png"></div>
-            </div>
-            <div class="overlay-button"  onclick="overlayOutAnimations(2);">
-                <span class="overlay-button-border"></span>
-                <div class="overlay-image"></div>
-            </div>
+    <div id="bottom-panel">
+        <div id="control-buttons">
+            <div class="control-button btn-disabled" id='play-button'><i class="fa fa-play"></i></div>
+            <div class="control-button btn-disabled"><i class="fa fa-pause"></i></div>
+            <div class="control-button btn-disabled"><i class="fa fa-repeat"></i></div>
         </div>
     </div>
+
     <script src="MapVisualization.js"></script>
     <script src="index.js"></script>
-    <script src="junaebViz.js"></script>
+    <script src="project/helperFunctions.js"></script>
+    <script src="project/junaebViz.js"></script>
 </body>
+
 </html>

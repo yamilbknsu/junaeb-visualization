@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "students_ccp",
+"name": "students_agg_ccp",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
 { "type": "Feature", "properties": { "osmid": "303475157", "x": 156801.36523353442, "y": 5956330.7882006466, "student_co": 112, "COMUNA": "Tome", "node_id": "303475157" }, "geometry": { "type": "Point", "coordinates": [ -72.830273500000018, -36.4768798 ] } },
