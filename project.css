@@ -12,6 +12,15 @@
     opacity: 0.6;
 }
 
+.student-walking{
+    fill:rgb(248, 120, 0);
+    stroke: rgb(158, 76, 0);
+    stroke-width: 1;
+    cursor: pointer;
+    z-index: 900;
+    opacity: 0.6;
+}
+
 .school{
     fill:rgb(9, 126, 141);
     stroke: rgb(39, 176, 194);
@@ -22,6 +31,8 @@
 
 .truck{
     fill:rgb(79, 11, 206);
+    stroke: rgb(50, 2, 139);
+    stroke-width: 2;
     cursor: pointer;
     z-index: 900;
 }
@@ -31,13 +42,21 @@
     fill:rgb(255, 231, 11);
     stroke: rgb(184, 194, 39);
 }
+
+.school-selected{
+    fill: rgb(16, 216, 43);
+    stroke:rgb(0, 139, 19);
+    stroke-width: 3;
+}
+
 .street{
     fill: none;
     opacity: .2;
     stroke-width: 1px;
-    stroke: yellow;
+    stroke: rgb(126, 128, 0);
     cursor: default;
 }
+
 .street-route{
     fill: none;
     stroke-width: 2px;

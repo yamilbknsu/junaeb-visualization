@@ -32,7 +32,7 @@ function loadCorrectMap(){
 
         drawStaticPoints({
             mapView: mapView,
-            data_path: 'data/schools_ccp.geojson',
+            data_path: 'data/ccp/schools_ccp.geojson',
             name: 'schools',
             r: 4,
             class_type: 'school',
@@ -48,7 +48,7 @@ function loadCorrectMap(){
 
         //TODO: Check the id's, this will probably be fixed when the data is corrected
         drawStaticPoints({mapView: mapView,
-                         data_path: 'data/schools_nuble.geojson',
+                         data_path: 'data/nuble/schools_nuble.geojson',
                          name: 'schools',
                          r: 4,
                          class_type: 'school',
@@ -145,6 +145,14 @@ function showAnimationInterface(){
       .duration(1000)
       .style('opacity', 1)
       .style('transform', 'translateY(0px)');
+}
+
+function hideAnimationInterface(){
+    d3.select('#user-interface')
+      .transition()
+      .duration(1000)
+      .style('opacity', 0)
+      .style('transform', 'translateY(-100px)');
 }
 
 function secondsToStr(seconds){

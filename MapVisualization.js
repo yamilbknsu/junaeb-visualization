@@ -14,7 +14,7 @@ function newMapVisualization(centerCoords, // Coords object
     zomm_level = 13,
     containerID = '#viz-container',
     tileFunction = getTileURL,
-    tileMode = 'dark_all') {
+    tileMode = 'light_all') {
 
     // Append div that will contain the map
     d3.select(containerID).append('div').attr('id', 'map');
@@ -191,9 +191,11 @@ function animatePath({mapView,
                     path,
                     id = 'route',
                     pointClass = 'truck',
-                    edgeClass = 'street-route', 
+                    edgeClass = 'street-route',
+                    r = 3, 
                     ipath = 0,
-                    onEndFunction = () => undefined} = {}){
+                    onEndFunction = () => undefined,
+                    transient = false} = {}){
     
     currentPath = path[ipath];
     time = $("#timer").html();
@@ -208,7 +210,7 @@ function animatePath({mapView,
    
     var circle = mapView.g.append("circle")
                         .attr("class", pointClass)
-                        .attr("r", 3)
+                        .attr("r", r)
                         .attr('id', 'circle_' + id)
                         .attr("transform", function() {
                             var p =  pathObject.node().getPointAtLength(0);
@@ -227,8 +229,16 @@ function animatePath({mapView,
                     })
                     .on("end", function() {
                         //pathObject.remove();
+                        if (transient){
+                            pathObject.transition()
+                                      .duration(500)
+                                      .style('opacity',0)
+                                      .on('end', ()=>{
+                                        pathObject.remove();
+                                      });
+                        }
                         d3.select(this).remove();
-                        onEndFunction(mapView, path, ipath, edgeClass);
+                        onEndFunction(mapView, path, ipath, r, edgeClass, pointClass, transient);
                         
                     })
 }

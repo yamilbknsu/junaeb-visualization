@@ -30,7 +30,7 @@ var mapView = newMapVisualization(concepcionCoords.center,
 
 drawStaticPoints({
     mapView: mapView,
-    data_path: 'data/schools_ccp.geojson',
+    data_path: 'data/ccp/schools_ccp.geojson',
     name: 'schools',
     r: 4,
     class_type: 'school',
@@ -45,6 +45,8 @@ drawStaticPoints({
 
 
 function prepareAnimation() {
+    hideAnimationInterface();
+
     // Update mapview to selected region
     mapView = loadCorrectMap();
 
@@ -52,16 +54,23 @@ function prepareAnimation() {
     if(region_selected == 1){
         //edges_car_file = '../data/ccp_WGS84.geojson';
         //edges_walking_file = '../data/ccp_walking_WGS84.geojson';
-        edges_file = animation_selected == 1 ? '../data/ccp_WGS84.geojson' : '../data/ccp_walking_WGS84.geojson';
-        students_file = animation_selected == 1 ? '../data/students_agg_ccp.geojson':'../data/students_ccp.geojson';
-        if (animation_selected == 1) assignments_file = '../data/agg_assignments_ccp.json';
-        else assignments_file = animation_selected == 3 ? '../data/nearestschool_assignment_ccp.json':'../data/actualschool_assignment_ccp.json'
+        edges_file = animation_selected == 1 ? '../data/ccp/ccp_WGS84.geojson' : '../data/ccp/ccp_walking_WGS84.geojson';
+        students_file = animation_selected == 1 ? '../data/ccp/students_agg_ccp.geojson':'../data/ccp/students_ccp.geojson';
+        if (animation_selected == 1) assignments_file = '../data/ccp/agg_assignments_ccp.json';
+        else assignments_file = animation_selected == 3 ? '../data/ccp/nearestschool_assignment_ccp.json':'../data/ccp/actualschool_assignment_ccp.json'
 
-        if (animation_selected == 1) routes_file = '../data/agg_routes_school_ccp.json';
-        else routes_file = animation_selected == 2 ? '../data/students_actual_school_paths_ccp.json':
-                                                '../data/students_nearest_school_paths_ccp.json';
+        if (animation_selected == 1) routes_file = '../data/ccp/agg_routes_school_ccp.json';
+        else routes_file = animation_selected == 2 ? '../data/ccp/students_actual_school_paths_ccp.json':
+                                                '../data/ccp/students_nearest_school_paths_ccp.json';
     }else{
+        edges_file = animation_selected == 1 ? '../data/nuble/nuble_WGS84.geojson' : '../data/nuble/nuble_walking_WGS84.geojson';
+        students_file = animation_selected == 1 ? '../data/nuble/students_agg_nuble.geojson':'../data/nuble/students_nuble.geojson';
+        if (animation_selected == 1) assignments_file = '../data/nuble/';
+        else assignments_file = animation_selected == 3 ? '../data/nuble/':'../data/nuble/'
 
+        if (animation_selected == 1) routes_file = '../data/nuble/nuble_agg_routes_school_links.json';
+        else routes_file = animation_selected == 2 ? '../data/nuble/':
+                                                '../data/nuble/';
     }
 
     Promise.all([d3.json(edges_file), d3.json(students_file),
@@ -73,7 +82,7 @@ function prepareAnimation() {
         routes = data[3];
         
         mapView.g.selectAll('circle.school')
-                .on('click', function (d) {
+                .on('click', function (d, i, n) {
                 pause().then(clear).then(function () {
                     if (typeof (timer) !== "undefined") {
                         timer.stop();
@@ -81,23 +90,32 @@ function prepareAnimation() {
                     if (animation_selected == 0) {
                         alert("Debes seleccionar una estrategia!");
                     } else{
+                        d3.select(n[i]).attr('r', 6)
+                          .classed('school-selected', true);
+
                         schoolAssignments = assignments[d.properties.node_id]
                         assignedStudentsFeature = students.features.filter(student => 
                                                   schoolAssignments.includes(student.properties.node_id))
-                        sp = []
-                        routes[d.properties.node_id].forEach(edgeID => sp.push(edges.features.find(edge => edge.properties.osmid == edgeID)))
-
                         projectAssignments(assignedStudentsFeature);
-                                         
-                        servedStudents = [];
-                        totalStudents = assignedStudentsFeature.length;
-                        totalTime = 0
-                        sp.forEach(path => totalTime += path.properties.time_secs)
-                        
-                        d3.select("#school-title").html(d.properties.node_id);
-                        d3.select('#student-amount-indicator').html(servedStudents.length + '/' + totalStudents);
-                        d3.select('#total-time-indicator').html(secondsToStr(Math.floor(totalTime)));
-                        showAnimationInterface();
+
+                        if (animation_selected == 1){
+                            sp = []
+                            routes[d.properties.node_id].forEach(edgeID => sp.push(edges.features.find(edge => edge.properties.osmid == edgeID)));
+                                             
+                            servedStudents = [];
+                            totalStudents = assignedStudentsFeature.length;
+                            totalTime = 0
+                            sp.forEach(path => totalTime += path.properties.time_secs)
+                            
+                            d3.select("#school-title").html(d.properties.node_id);
+                            d3.select('#student-amount-indicator').html(servedStudents.length + '/' + totalStudents);
+                            d3.select('#total-time-indicator').html(secondsToStr(Math.floor(totalTime)));
+                            showAnimationInterface();
+    
+                            
+                        }else{
+                            // DO something
+                        }
 
                         $('.btn-disabled').toggleClass('btn-disabled');
 
@@ -107,8 +125,8 @@ function prepareAnimation() {
     
                             if (animation_selected == 1) {
                                 animateSchoolRoute(sp, schoolAssignments, timer);
-                            } else if (animation_selected == 2) {
-                                animateStudentsWalk(sp, schoolAssignments, timer);
+                            } else if (animation_selected == 2 || animation_selected == 3) {
+                                animateStudentsWalk(routes[d.properties.node_id], edges, schoolAssignments, timer);
                             }
                         });
                     }
@@ -128,7 +146,8 @@ function projectAssignments(assignedStudentsFeature) {
         .append("circle")
         .attr("class", "student-unserved")
         .attr("id", function (d) {
-            return 's' + d.properties.osmid;
+            id = d.properties.osmid === undefined ? d.properties.node_id : d.properties.osmid
+            return 's' + String(id);
         })
         .attr('cx', function (d) {
             coor = d.geometry.coordinates
@@ -146,7 +165,8 @@ function animateSchoolRoute(sp, assignments, timer = undefined) {
     animateNextPath = (
         mapView,
         path,
-        ipath
+        ipath,
+        r
     ) => {
         if (ipath < path.length - 1) {
             delay = 0
@@ -164,6 +184,7 @@ function animateSchoolRoute(sp, assignments, timer = undefined) {
                 mapView: mapView,
                 path: path,
                 ipath: ipath + 1,
+                r: r,
                 onEndFunction: animateNextPath
             });
 
@@ -176,6 +197,7 @@ function animateSchoolRoute(sp, assignments, timer = undefined) {
     animatePath({
         mapView: mapView,
         path: sp,
+        r: 4,
         onEndFunction: animateNextPath
     });
 
@@ -194,7 +216,10 @@ function animateStudentsWalk(routes, edges, timer) {
         mapView,
         path,
         ipath,
+        r,
         edgeClass,
+        pointClass,
+        transient
     ) => {
         if (ipath < path.length - 1) {
             delay = 0;
@@ -203,7 +228,10 @@ function animateStudentsWalk(routes, edges, timer) {
                 path: path,
                 ipath: ipath + 1,
                 edgeClass: edgeClass,
-                onEndFunction: animateNextPath
+                pointClass: pointClass,
+                r: r,
+                onEndFunction: animateNextPath,
+                transient: transient
             });
         } else {
             ended++;
@@ -216,6 +244,7 @@ function animateStudentsWalk(routes, edges, timer) {
 
     Object.entries(routes).forEach((route) => {
         student_id = route[0];
+        d3.select('#s'+student_id).remove();
         sp_ids = route[1];
 
         sp = []
@@ -224,10 +253,12 @@ function animateStudentsWalk(routes, edges, timer) {
         animatePath({
             mapView: mapView,
             path: sp,
-            pointClass: 'student-unserved',
-            edgeClass: 'street-invisible',
+            pointClass: 'student-walking',
+            edgeClass: 'street',
+            r:3,
             onEndFunction: animateNextPath,
-            ipath: 0
+            ipath: 0,
+            transient: true
         });
 
     });
@@ -250,6 +281,9 @@ function clear() {
         d3.selectAll('circle.student-served').remove();
         d3.selectAll('circle.student-unserved').remove();
         d3.selectAll('path.street-route').remove();
+        d3.selectAll('circle.school')
+            .attr('r', 3)
+            .classed('school-selected', false);
         resolve();
     })
 }
