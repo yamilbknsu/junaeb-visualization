@@ -3,7 +3,8 @@ let timer, animation_selected = 0, region_selected = 0;
 
 // State variables
 var servedStudents = [],
-    totalStudents = 0;
+    totalStudents = 0,
+    upcomingAnimations = [];
 
 $("#clear-button").on("click", clear);
 $("#pause-button").on("click", pause);
@@ -45,6 +46,7 @@ drawStaticPoints({
 
 
 function prepareAnimation() {
+    clear();
     hideAnimationInterface();
 
     // Update mapview to selected region
@@ -52,8 +54,6 @@ function prepareAnimation() {
 
     // Load the data
     if(region_selected == 1){
-        //edges_car_file = '../data/ccp_WGS84.geojson';
-        //edges_walking_file = '../data/ccp_walking_WGS84.geojson';
         edges_file = animation_selected == 1 ? '../data/ccp/ccp_WGS84.geojson' : '../data/ccp/ccp_walking_WGS84.geojson';
         students_file = animation_selected == 1 ? '../data/ccp/students_agg_ccp.geojson':'../data/ccp/students_ccp.geojson';
         if (animation_selected == 1) assignments_file = '../data/ccp/agg_assignments_ccp.json';
@@ -83,7 +83,8 @@ function prepareAnimation() {
         
         mapView.g.selectAll('circle.school')
                 .on('click', function (d, i, n) {
-                pause().then(clear).then(function () {
+                pause()//.then(clear)
+                .then(function () {
                     if (typeof (timer) !== "undefined") {
                         timer.stop();
                     }
@@ -97,11 +98,13 @@ function prepareAnimation() {
                         assignedStudentsFeature = students.features.filter(student => 
                                                   schoolAssignments.includes(student.properties.node_id))
                         projectAssignments(assignedStudentsFeature);
-
+                        
                         if (animation_selected == 1){
                             sp = []
                             routes[d.properties.node_id].forEach(edgeID => sp.push(edges.features.find(edge => edge.properties.osmid == edgeID)));
-                                             
+                            upcomingAnimations.push([animateSchoolRoute, [sp, schoolAssignments, timer]]);
+                            
+                            /*
                             servedStudents = [];
                             totalStudents = assignedStudentsFeature.length;
                             totalTime = 0
@@ -110,11 +113,12 @@ function prepareAnimation() {
                             d3.select("#school-title").html(d.properties.node_id);
                             d3.select('#student-amount-indicator').html(servedStudents.length + '/' + totalStudents);
                             d3.select('#total-time-indicator').html(secondsToStr(Math.floor(totalTime)));
-                            showAnimationInterface();
+                            showAnimationInterface();*/
     
                             
                         }else{
                             // DO something
+                            upcomingAnimations.push([animateStudentsWalk, [routes[d.properties.node_id], edges, schoolAssignments, timer]]);
                         }
 
                         $('.btn-disabled').toggleClass('btn-disabled');
@@ -122,12 +126,18 @@ function prepareAnimation() {
                         d3.select("#play-button").on("click", function () {
 
                             timer = startTimer();
-    
+
+                            upcomingAnimations.forEach((anim) => {
+                                anim[0].apply(null, anim[1]);
+                            });
+                            upcomingAnimations = [];
+                            
+                            /*
                             if (animation_selected == 1) {
                                 animateSchoolRoute(sp, schoolAssignments, timer);
                             } else if (animation_selected == 2 || animation_selected == 3) {
                                 animateStudentsWalk(routes[d.properties.node_id], edges, schoolAssignments, timer);
-                            }
+                            }*/
                         });
                     }
                         
@@ -140,7 +150,7 @@ function prepareAnimation() {
 
 function projectAssignments(assignedStudentsFeature) {
 
-    mapView.g.selectAll('circle.student-unserved')
+    mapView.g.selectAll('circle.student')
         .data(assignedStudentsFeature)
         .enter()
         .append("circle")
@@ -159,19 +169,19 @@ function projectAssignments(assignedStudentsFeature) {
         .attr("r", 3);
 }
 
-function animateSchoolRoute(sp, assignments, timer = undefined) {
 
-    // this function is project-specific thats why is here.
-    animateNextPath = (
+// this function is project-specific thats why is here.
+animateNextPathCar = (
         mapView,
         path,
         ipath,
-        r
+        r,
+        assignments_students
     ) => {
         if (ipath < path.length - 1) {
             delay = 0
             endNode = path[ipath].properties.v;
-            if (assignments.includes(endNode)) {
+            if (assignments_students.includes(endNode)) {
                 time = $("#timer").html();
                 if (!servedStudents.includes(endNode)) servedStudents.push(endNode);
                 d3.select('#student-amount-indicator').html(servedStudents.length + '/' + totalStudents);
@@ -185,62 +195,60 @@ function animateSchoolRoute(sp, assignments, timer = undefined) {
                 path: path,
                 ipath: ipath + 1,
                 r: r,
-                onEndFunction: animateNextPath
+                assignments: assignments_students,
+                onEndFunction: animateNextPathCar
             });
 
 
 
         } else {
-            timer.stop();
         }
     }
+
+function animateSchoolRoute(sp, assignments, timer = undefined) {
+
+
     animatePath({
         mapView: mapView,
         path: sp,
         r: 4,
-        onEndFunction: animateNextPath
+        assignments: assignments,
+        onEndFunction: animateNextPathCar
     });
 
 
 }
 
+animateNextPathWalk = (
+    mapView,
+    path,
+    ipath,
+    r,
+    assignments_students,
+    edgeClass,
+    pointClass,
+    transient
+) => {
+    if (ipath < path.length - 1) {
+        delay = 0;
+        animatePath({
+            mapView: mapView,
+            path: path,
+            ipath: ipath + 1,
+            edgeClass: edgeClass,
+            pointClass: pointClass,
+            r: r,
+            assignments: assignments_students,
+            onEndFunction: animateNextPathWalk,
+            transient: transient
+        });
+    } else {
+    }
+}
+
 function animateStudentsWalk(routes, edges, timer) {
     var ended = 0;
-
-    // this function is project-specific thats why is here.
-    /* Creo que para hacer esto vamos a tener que hacer que la función animatePath retorne una promesa.
-    El problema es que no se como meter eso con la recusrividad. La otra opción es ocupar queue defer, que como dije
-    por el grupo está deprecated. Also, creo que los paths están como el pic again.
-    */
-    animateNextPath = (
-        mapView,
-        path,
-        ipath,
-        r,
-        edgeClass,
-        pointClass,
-        transient
-    ) => {
-        if (ipath < path.length - 1) {
-            delay = 0;
-            animatePath({
-                mapView: mapView,
-                path: path,
-                ipath: ipath + 1,
-                edgeClass: edgeClass,
-                pointClass: pointClass,
-                r: r,
-                onEndFunction: animateNextPath,
-                transient: transient
-            });
-        } else {
-            ended++;
-            if (ended == routes.length) {
-                console.log('All Routes Ended');
-                timer.stop();
-            }
-        }
-    }
+    
 
     Object.entries(routes).forEach((route) => {
         student_id = route[0];
@@ -256,7 +264,8 @@ function animateStudentsWalk(routes, edges, timer) {
             pointClass: 'student-walking',
             edgeClass: 'street',
             r:3,
-            onEndFunction: animateNextPath,
+            assignments: [],
+            onEndFunction: animateNextPathWalk,
             ipath: 0,
             transient: true
         });

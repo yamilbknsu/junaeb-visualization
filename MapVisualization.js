@@ -194,6 +194,7 @@ function animatePath({mapView,
                     edgeClass = 'street-route',
                     r = 3, 
                     ipath = 0,
+                    assignments = [],
                     onEndFunction = () => undefined,
                     transient = false} = {}){
     
@@ -238,7 +239,7 @@ function animatePath({mapView,
                                       });
                         }
                         d3.select(this).remove();
-                        onEndFunction(mapView, path, ipath, r, edgeClass, pointClass, transient);
+                        onEndFunction(mapView, path, ipath, r, assignments, edgeClass, pointClass, transient);
                         
                     })
 }

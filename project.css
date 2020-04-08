@@ -53,14 +53,14 @@
     fill: none;
     opacity: .2;
     stroke-width: 1px;
-    stroke: rgb(126, 128, 0);
+    stroke: rgb(191, 194, 4);
     cursor: default;
 }
 
 .street-route{
     fill: none;
     stroke-width: 2px;
-    stroke: rgb(126, 128, 0);
+    stroke: rgb(201, 204, 0);
     opacity: .5;
 }
 
