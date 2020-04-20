@@ -139,7 +139,7 @@ function prepareAnimation() {
                             });
     
                             d3.select('#clear-button').on('click', () =>{
-                                pause().then(() => clear().then(() => prepareAnimation()));
+                                pause().then(() => clear().then(() => onStrategyChanged()));
                             });
                         }
                             
