@@ -2,13 +2,13 @@
 ## The project
 This visualization was built to analyse different strategies
 for delivering food that is usually supplied by school to 
-students that rely on them to eat everyday.
+students that rely on them to eat everyday. <br>
 So during an emergency such as the COVID-19 pandemic, we are pushed
 to find better ways of delivering this service contrained by the situation.
 In this case, this means have as little contact between citizens as possible, so the disease
-doesn't continue spreading.
+doesn't continue spreading.<br>
 For this reason, we have built an optimization process that computes optimal routes applying different
-strategies to the network graph of two of the biggest cities of southern Chile, Concepción and Chillán.
+strategies to the network graph of two of the biggest cities of southern Chile, Concepción and Chillán.<br>
 The results are then animated on this platform so we can visualize the results and act accordingly.
 
 ### Estrategies
