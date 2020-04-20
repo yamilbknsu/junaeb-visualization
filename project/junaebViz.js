@@ -7,9 +7,6 @@ var servedStudents = [],
     totalStudents = 0,
     upcomingAnimations = [];
 
-$("#clear-button").on("click", clear);
-$("#pause-button").on("click", pause);
-
 // Some hardcoded data (?)
 var concepcionCoords = {
     center: new Coords(-36.8181067, -73.0488407),
@@ -47,107 +44,112 @@ drawStaticPoints({
 
 
 function prepareAnimation() {
-    clear();
-    hideAnimationInterface();
-
-    // Update mapview to selected region
-    mapView = loadCorrectMap();
-
-    // Load the data
-    if(region_selected == 1){
-        edges_file = (animation_selected == 1 || animation_selected == 2) ? DATA_DIR + 'ccp/ccp_WGS84.geojson' : DATA_DIR + 'ccp/ccp_walking_WGS84.geojson';
-        students_file = animation_selected == 1 ? DATA_DIR + 'ccp/students_agg_ccp.geojson':DATA_DIR + 'ccp/students_ccp.geojson';
-        if (animation_selected == 1) assignments_file = DATA_DIR + 'ccp/agg_assignments_ccp.json';
-        else assignments_file = animation_selected == 4 ? DATA_DIR + 'ccp/nearestschool_assignment_ccp.json':DATA_DIR + 'ccp/actualschool_assignment_ccp.json'
-
-        if (animation_selected == 1) routes_file = DATA_DIR + 'ccp/ccp_agg_routes_school_links.json';
-        else if (animation_selected == 2) routes_file = DATA_DIR + 'ccp/ccp_actual_routes_school_links.json';
-        else routes_file = animation_selected == 3 ? DATA_DIR + 'ccp/ccp_actual_school_students_paths.json':
-                                                    DATA_DIR + 'ccp/ccp_nearest_school_students_paths.json';
-    }else{
-        edges_file = (animation_selected == 1 || animation_selected == 2) ? DATA_DIR + 'nuble/nuble_WGS84.geojson' : DATA_DIR + 'nuble/nuble_walking_WGS84.geojson';
-        students_file = animation_selected == 1 ? DATA_DIR + 'nuble/students_agg_nuble.geojson':DATA_DIR + 'nuble/students_nuble.geojson';
-        if (animation_selected == 1) assignments_file = DATA_DIR + 'nuble/nuble_Assignment_agg_to_school.json';
-        else assignments_file = animation_selected == 4 ? DATA_DIR + 'nuble/nuble_nearestschool_assignment.json':DATA_DIR + 'nuble/nuble_actualschool_assignment.json'
-
-        if (animation_selected == 1) routes_file = DATA_DIR + 'nuble/ñuble_agg_routes_school_links.json';
-        else if (animation_selected == 2) routes_file = DATA_DIR + 'nuble/ñuble_actual_routes_school_links.json';
-        else routes_file = animation_selected == 3 ? DATA_DIR + 'nuble/ñuble_actual_school_students_paths.json':
-                                                DATA_DIR + 'nuble/ñuble_nearest_school_students_paths.json';
-    }
-
-    Promise.all([d3.json(edges_file), d3.json(students_file),
-                 d3.json(assignments_file), d3.json(routes_file)])
-    .then((data) => {
-        edges = data[0];
-        students = data[1];
-        assignments = data[2];
-        routes = data[3];
-        
-        mapView.g.selectAll('circle.school')
-                .on('click', function (d, i, n) {
-                pause()//.then(clear)
-                .then(function () {
-                    if (typeof (timer) !== "undefined") {
-                        timer.stop();
-                    }
-                    if (animation_selected == 0) {
-                        alert("Debes seleccionar una estrategia!");
-                    } else{
-                        d3.select(n[i]).attr('r', 6)
-                          .classed('school-selected', true);
-
-                        schoolAssignments = assignments[d.properties.node_id]
-                        assignedStudentsFeature = students.features.filter(student => 
-                            schoolAssignments.includes(student.properties.node_id))
-                        
-                        projectAssignments(assignedStudentsFeature);
-                        
-                        if (animation_selected == 1 || animation_selected == 2){
-                            sp = []
-                            routes[d.properties.node_id].forEach(edgeID => sp.push(edges.features.find(edge => edge.properties.osmid == edgeID)));
-                            upcomingAnimations.push([animateSchoolRoute, [sp, schoolAssignments, timer]]);
-                            
-                            totalStudents += assignedStudentsFeature.length;
-                            //totalTime = 0
-                            //sp.forEach(path => totalTime += path.properties.time_secs)
-                            
-                            school_text = d3.select("#school-title").html()
-                            if (school_text == ""){
-                                d3.select("#school-title").html(d.properties.node_id)
-                            }else{
-                                d3.select("#school-title").html(school_text + ", " + d.properties.node_id);
-                            }
-
-                            d3.select('#student-amount-indicator').html(servedStudents.length + '/' + totalStudents);
-                            //d3.select('#total-time-indicator').html(secondsToStr(Math.floor(totalTime)));
-                            showAnimationInterface();
+    return new Promise((resolve, reject) => {
+        clear();
+        hideAnimationInterface();
     
-                            
-                        }else{
-                            // DO something
-                            upcomingAnimations.push([animateStudentsWalk, [routes[d.properties.node_id], edges, schoolAssignments, timer]]);
+        // Update mapview to selected region
+        mapView = loadCorrectMap();
+    
+        // Load the data
+        if(region_selected == 1){
+            edges_file = (animation_selected == 1 || animation_selected == 2) ? DATA_DIR + 'ccp/ccp_WGS84.geojson' : DATA_DIR + 'ccp/ccp_walking_WGS84.geojson';
+            students_file = animation_selected == 1 ? DATA_DIR + 'ccp/students_agg_ccp.geojson':DATA_DIR + 'ccp/students_ccp.geojson';
+            if (animation_selected == 1) assignments_file = DATA_DIR + 'ccp/agg_assignments_ccp.json';
+            else assignments_file = animation_selected == 4 ? DATA_DIR + 'ccp/nearestschool_assignment_ccp.json':DATA_DIR + 'ccp/actualschool_assignment_ccp.json'
+    
+            if (animation_selected == 1) routes_file = DATA_DIR + 'ccp/ccp_agg_routes_school_links.json';
+            else if (animation_selected == 2) routes_file = DATA_DIR + 'ccp/ccp_actual_routes_school_links.json';
+            else routes_file = animation_selected == 3 ? DATA_DIR + 'ccp/ccp_actual_school_students_paths.json':
+                                                        DATA_DIR + 'ccp/ccp_nearest_school_students_paths.json';
+        }else{
+            edges_file = (animation_selected == 1 || animation_selected == 2) ? DATA_DIR + 'nuble/nuble_WGS84.geojson' : DATA_DIR + 'nuble/nuble_walking_WGS84.geojson';
+            students_file = animation_selected == 1 ? DATA_DIR + 'nuble/students_agg_nuble.geojson':DATA_DIR + 'nuble/students_nuble.geojson';
+            if (animation_selected == 1) assignments_file = DATA_DIR + 'nuble/nuble_Assignment_agg_to_school.json';
+            else assignments_file = animation_selected == 4 ? DATA_DIR + 'nuble/nuble_nearestschool_assignment.json':DATA_DIR + 'nuble/nuble_actualschool_assignment.json'
+    
+            if (animation_selected == 1) routes_file = DATA_DIR + 'nuble/ñuble_agg_routes_school_links.json';
+            else if (animation_selected == 2) routes_file = DATA_DIR + 'nuble/ñuble_actual_routes_school_links.json';
+            else routes_file = animation_selected == 3 ? DATA_DIR + 'nuble/ñuble_actual_school_students_paths.json':
+                                                    DATA_DIR + 'nuble/ñuble_nearest_school_students_paths.json';
+        }
+    
+        Promise.all([d3.json(edges_file), d3.json(students_file),
+                     d3.json(assignments_file), d3.json(routes_file)])
+        .then((data) => {
+            edges = data[0];
+            students = data[1];
+            assignments = data[2];
+            routes = data[3];
+            
+            mapView.g.selectAll('circle.school')
+                    .on('click', function (d, i, n) {
+                    pause()//.then(clear)
+                    .then(function () {
+                        if (typeof (timer) !== "undefined") {
+                            timer.stop();
                         }
-
-                        $('.btn-disabled').toggleClass('btn-disabled');
-
-                        d3.select("#play-button").on("click", function () {
-                            timer = startTimer();
-                            console.log('Started')
-                            animateAll(upcomingAnimations).then(() => {
-                                console.log('finished');
-                                upcomingAnimations = [];
+                        if (animation_selected == 0) {
+                            alert("Debes seleccionar una estrategia!");
+                        } else{
+                            d3.select(n[i]).attr('r', 6)
+                              .classed('school-selected', true);
+    
+                            schoolAssignments = assignments[d.properties.node_id]
+                            assignedStudentsFeature = students.features.filter(student => 
+                                schoolAssignments.includes(student.properties.node_id))
+                            
+                            projectAssignments(assignedStudentsFeature);
+                            
+                            if (animation_selected == 1 || animation_selected == 2){
+                                sp = []
+                                routes[d.properties.node_id].forEach(edgeID => sp.push(edges.features.find(edge => edge.properties.osmid == edgeID)));
+                                upcomingAnimations.push([animateSchoolRoute, [sp, schoolAssignments, timer]]);
+                                
+                                totalStudents += assignedStudentsFeature.length;
+                                //totalTime = 0
+                                //sp.forEach(path => totalTime += path.properties.time_secs)
+                                
+                                school_text = d3.select("#school-title").html()
+                                if (school_text == ""){
+                                    d3.select("#school-title").html(d.properties.node_id)
+                                }else{
+                                    d3.select("#school-title").html(school_text + ", " + d.properties.node_id);
+                                }
+    
+                                d3.select('#student-amount-indicator').html(servedStudents.length + '/' + totalStudents);
+                                //d3.select('#total-time-indicator').html(secondsToStr(Math.floor(totalTime)));
+                                showAnimationInterface();
+        
+                                
+                            }else{
+                                // DO something
+                                upcomingAnimations.push([animateStudentsWalk, [routes[d.properties.node_id], edges, schoolAssignments, timer]]);
+                            }
+    
+                            $('.btn-disabled').toggleClass('btn-disabled');
+    
+                            d3.select("#play-button").on("click", function () {
+                                timer = startTimer();
+                                console.log('Started')
+                                animateAll(upcomingAnimations).then(() => {
+                                    console.log('finished');
+                                    upcomingAnimations = [];
+                                });
                             });
-                        });
-
-                        d3.select('#clear-button').on('click', () =>{
-                            pause().then(() => clear().then(() => prepareAnimation()));
-                        });
-                    }
-                        
+    
+                            d3.select('#clear-button').on('click', () =>{
+                                pause().then(() => clear().then(() => prepareAnimation()));
+                            });
+                        }
+                            
+                    });
+    
                 });
 
-            });
+                resolve();
+        });
+    
     });
 }
 

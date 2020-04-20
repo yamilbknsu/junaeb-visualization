@@ -101,7 +101,22 @@ function onRegionChanged(region){
     }
 
     if(animation_selected != 0 && region_selected != 0){
-        prepareAnimation();
+        d3.select('#overlay-panel')
+            .style('display', 'flex');
+        d3.select('#loading-text')
+            .style('display', 'block')
+            .transition()
+            .duration(1000)
+            .style('opacity', 1);
+        d3.select('#loading-asset')
+            .style('display', 'block')
+            .transition()
+            .duration(1000)
+            .style('opacity', 1);
+        prepareAnimation().then(() => {
+            d3.select('#overlay-panel')
+            .style('display', 'none');
+        });
     }
 }
 
@@ -126,14 +141,27 @@ function onStrategyChanged(strategy){
           .on('end', ()=>{
               d3.select('#strategy-title')
               .style('transform', 'translateY(100px)')
-
-              d3.select('#overlay-panel')
-                .style('display', 'none');
+              
           });
     }
     
     if(animation_selected != 0 && region_selected != 0){
-        prepareAnimation();
+        d3.select('#overlay-panel')
+            .style('display', 'flex');
+        d3.select('#loading-text')
+            .style('display', 'block')
+            .transition()
+            .duration(1000)
+            .style('opacity', 1);
+        d3.select('#loading-asset')
+            .style('display', 'block')
+            .transition()
+            .duration(1000)
+            .style('opacity', 1);
+        prepareAnimation().then(() => {
+            d3.select('#overlay-panel')
+            .style('display', 'none');
+        });
     }
 }
 
