@@ -59,9 +59,9 @@
 
 .street-route{
     fill: none;
-    stroke-width: 2px;
-    stroke: rgb(201, 204, 0);
-    opacity: .5;
+    stroke-width: 1.5px;
+    stroke: rgb(90, 129, 255);
+    opacity: .1;
 }
 
 .street-invisible{

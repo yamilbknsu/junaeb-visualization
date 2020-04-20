@@ -138,6 +138,10 @@ function prepareAnimation() {
                                 upcomingAnimations = [];
                             });
                         });
+
+                        d3.select('#clear-button').on('click', () =>{
+                            pause().then(() => clear().then(() => prepareAnimation()));
+                        });
                     }
                         
                 });
@@ -292,6 +296,10 @@ function clear() {
         d3.selectAll('circle.school')
             .attr('r', 3)
             .classed('school-selected', false);
+        servedStudents = [];
+        totalStudents = 0;
+        upcomingAnimations = [];
+        d3.select("#school-title").html('')
         resolve();
     })
 }

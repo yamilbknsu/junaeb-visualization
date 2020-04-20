@@ -118,7 +118,7 @@ function reset() {
     });
 
     d3.selectAll('path').attr("d", d3Path);
-    d3.selectAll('circle')
+    d3.selectAll('circle.school')
                 .attr('cx', function (d) {
                     coor = d.geometry.coordinates
                     return map.latLngToLayerPoint([coor[1], coor[0]]).x;
@@ -126,6 +126,15 @@ function reset() {
                     coor = d.geometry.coordinates
                     return map.latLngToLayerPoint([coor[1], coor[0]]).y;
                 });
+    d3.selectAll('circle.student-served, circle.student-unserved')
+        .attr('cx', function (d) {
+            coor = d.geometry.coordinates
+            return map.latLngToLayerPoint([coor[1], coor[0]]).x;
+        }).attr('cy', function (d) {
+            coor = d.geometry.coordinates
+            return map.latLngToLayerPoint([coor[1], coor[0]]).y;
+        });
+        
     Object.keys(drawnStreets).forEach((key) => {
         drawnStreets[key]
             .attr('d', d3Path);
