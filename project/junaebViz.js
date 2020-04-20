@@ -1,5 +1,6 @@
 // Global variables
 let timer, animation_selected = 0, region_selected = 0;
+let DATA_DIR = 'https://raw.githubusercontent.com/yamilbknsu/junaeb-visualization/master/data/';
 
 // State variables
 var servedStudents = [],
@@ -54,25 +55,25 @@ function prepareAnimation() {
 
     // Load the data
     if(region_selected == 1){
-        edges_file = (animation_selected == 1 || animation_selected == 2) ? '../data/ccp/ccp_WGS84.geojson' : '../data/ccp/ccp_walking_WGS84.geojson';
-        students_file = animation_selected == 1 ? '../data/ccp/students_agg_ccp.geojson':'../data/ccp/students_ccp.geojson';
-        if (animation_selected == 1) assignments_file = '../data/ccp/agg_assignments_ccp.json';
-        else assignments_file = animation_selected == 4 ? '../data/ccp/nearestschool_assignment_ccp.json':'../data/ccp/actualschool_assignment_ccp.json'
+        edges_file = (animation_selected == 1 || animation_selected == 2) ? DATA_DIR + 'ccp/ccp_WGS84.geojson' : DATA_DIR + 'ccp/ccp_walking_WGS84.geojson';
+        students_file = animation_selected == 1 ? DATA_DIR + 'ccp/students_agg_ccp.geojson':DATA_DIR + 'ccp/students_ccp.geojson';
+        if (animation_selected == 1) assignments_file = DATA_DIR + 'ccp/agg_assignments_ccp.json';
+        else assignments_file = animation_selected == 4 ? DATA_DIR + 'ccp/nearestschool_assignment_ccp.json':DATA_DIR + 'ccp/actualschool_assignment_ccp.json'
 
-        if (animation_selected == 1) routes_file = '../data/ccp/ccp_agg_routes_school_links.json';
-        else if (animation_selected == 2) routes_file = '../data/ccp/ccp_actual_routes_school_links.json';
-        else routes_file = animation_selected == 3 ? '../data/ccp/ccp_actual_school_students_paths.json':
-                                                '../data/ccp/ccp_nearest_school_students_paths.json';
+        if (animation_selected == 1) routes_file = DATA_DIR + 'ccp/ccp_agg_routes_school_links.json';
+        else if (animation_selected == 2) routes_file = DATA_DIR + 'ccp/ccp_actual_routes_school_links.json';
+        else routes_file = animation_selected == 3 ? DATA_DIR + 'ccp/ccp_actual_school_students_paths.json':
+                                                    DATA_DIR + 'ccp/ccp_nearest_school_students_paths.json';
     }else{
-        edges_file = (animation_selected == 1 || animation_selected == 2) ? '../data/nuble/nuble_WGS84.geojson' : '../data/nuble/nuble_walking_WGS84.geojson';
-        students_file = animation_selected == 1 ? '../data/nuble/students_agg_nuble.geojson':'../data/nuble/students_nuble.geojson';
-        if (animation_selected == 1) assignments_file = '../data/nuble/nuble_Assignment_agg_to_school.json';
-        else assignments_file = animation_selected == 4 ? '../data/nuble/nuble_nearestschool_assignment.json':'../data/nuble/nuble_actualschool_assignment.json'
+        edges_file = (animation_selected == 1 || animation_selected == 2) ? DATA_DIR + 'nuble/nuble_WGS84.geojson' : DATA_DIR + 'nuble/nuble_walking_WGS84.geojson';
+        students_file = animation_selected == 1 ? DATA_DIR + 'nuble/students_agg_nuble.geojson':DATA_DIR + 'nuble/students_nuble.geojson';
+        if (animation_selected == 1) assignments_file = DATA_DIR + 'nuble/nuble_Assignment_agg_to_school.json';
+        else assignments_file = animation_selected == 4 ? DATA_DIR + 'nuble/nuble_nearestschool_assignment.json':DATA_DIR + 'nuble/nuble_actualschool_assignment.json'
 
-        if (animation_selected == 1) routes_file = '../data/nuble/ñuble_agg_routes_school_links.json';
-        else if (animation_selected == 2) routes_file = '../data/nuble/ñuble_actual_routes_school_links.json';
-        else routes_file = animation_selected == 3 ? '../data/nuble/ñuble_actual_school_students_paths.json':
-                                                '../data/nuble/ñuble_nearest_school_students_paths.json';
+        if (animation_selected == 1) routes_file = DATA_DIR + 'nuble/ñuble_agg_routes_school_links.json';
+        else if (animation_selected == 2) routes_file = DATA_DIR + 'nuble/ñuble_actual_routes_school_links.json';
+        else routes_file = animation_selected == 3 ? DATA_DIR + 'nuble/ñuble_actual_school_students_paths.json':
+                                                DATA_DIR + 'nuble/ñuble_nearest_school_students_paths.json';
     }
 
     Promise.all([d3.json(edges_file), d3.json(students_file),
