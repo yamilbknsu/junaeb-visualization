@@ -18,7 +18,7 @@ html, body{
     width: 100%;
 
     --button-size: 45px;
-    --viz-side-margin: 10%;
+    --viz-side-margin: 0%;
 
     --background-color: #272838;
     --dark-accent: #7d6b91;
@@ -37,28 +37,35 @@ body{
 }
 
 #page-header{
-    height: 130px;
+    position: relative;
+    top:0;
+    left: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    text-align: center;
+    text-align: left;
     margin-bottom: 16px;
     margin-top: 24px;
 }
 
-#page-header > h1{
+#page-title{
+    top: 12px;
+    left: 12px;
+    position: absolute;
     font-family: 'Raleway', sans-serif;
-    color: var(--dark-accent);
+    color: rgb(23, 31, 37);
+    font-size: 40px;
 }
 
 /* Visualization elements*/
 #viz-wrapper{
-    border: 2px var(--light-accent) solid;
+    position: relative;
+    /*border: 2px var(--light-accent) solid;*/
     box-sizing: border-box;
     flex:1;
     margin-left: var(--viz-side-margin);
     margin-right: var(--viz-side-margin);
-    margin-bottom: 1%;
+    margin-bottom: 0%;
     overflow: hidden;
 }
 
@@ -85,6 +92,87 @@ svg {
     position: relative;
 }
 
+#description{
+    position: absolute;
+    width: 300px;
+    bottom: 40px;
+    right: 16px;
+    padding: 16px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, .8);
+    color: white;
+}
+
+#general-description{
+    font-size: 15px;
+    text-align: justify;
+}
+
+#symbology{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+#symbology > h3{
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.symbology-item{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.school-symbology{
+    width: 12px;
+    height: 12px;
+    border-radius: 12px;
+    border: 3px solid rgb(39, 176, 194);
+    background-color: rgb(9, 126, 141);
+    margin-right: 10px;
+}
+
+.selected-school-symbology{
+    width: 12px;
+    height: 12px;
+    border-radius: 12px;
+    border: 3px solid rgb(0, 139, 19);
+    background-color: rgb(16, 216, 43);
+    margin-right: 10px;
+}
+
+.unserved-student-symbology{
+    width: 8px;
+    height: 8px;
+    border-radius: 8px;
+    background-color: rgb(206, 0, 0);
+    margin: 6px;
+    margin-right: 12px;
+}
+
+.served-student-symbology{
+    width: 8px;
+    height: 8px;
+    border-radius: 8px;
+    background-color: rgb(0, 206, 27);
+    margin: 6px;
+    margin-right: 12px;
+}
+.walking-student-symbology{
+    width: 8px;
+    height: 8px;
+    border-radius: 8px;
+    background-color: rgb(248, 120, 0);
+    margin: 6px;
+    margin-right: 12px;
+}
+
 /* UI elements */ 
 /* Control buttons */
 #control-buttons{
@@ -98,7 +186,8 @@ svg {
     height: var(--button-size);
     margin: 12px;
     text-align: center;
-    background-color: var(--accent-alternative);
+    /*background-color: var(--accent-alternative);*/
+    border: 3px black solid;
     border-radius: 50%;
     line-height: var(--button-size);
     cursor: pointer;
@@ -106,7 +195,8 @@ svg {
 }
 
 .btn-disabled{
-    background-color: grey;
+    color: grey;
+    border-color: grey;
     cursor: auto;
 }
 
@@ -116,15 +206,18 @@ svg {
 }
 
 .btn-disabled:hover{
-    background-color: grey;
+    background-color: rgba(0, 0, 0, 0);
     cursor: auto;
-    color: black;
+    color: grey;
 }
 
 #animation-setup{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+    position: absolute;
+    left: 16px;
+    bottom: 20px;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: left;
     margin-top: 15px;
 }
 
@@ -159,17 +252,17 @@ svg {
 #user-interface{
     position: absolute;
     margin-top: 16px;
-    right: calc(var(--viz-side-margin) + 20px);
+    right: 20px;
     border-radius: 20px;
     overflow: hidden;
-    transform: translateY(-100px);
+    transform: translateY(0px);
     opacity: 0;
 }
 
 #school-panel{
     display: flex;
     flex-direction: column;
-    min-width: 300px;
+    width: 300px;
     background-color: rgba(20,20,20, .90);
 }
 
@@ -178,6 +271,7 @@ svg {
     font-family: 'Roboto', sans-serif;
     text-align: center;
     margin-bottom: 16px;
+    width: 100%;
 }
 
 .overlay-info{
@@ -293,7 +387,9 @@ svg {
 
 }
 
-
+.custom-select{
+    display: inline-block;
+}
 
 .selector {
     margin: 10px;

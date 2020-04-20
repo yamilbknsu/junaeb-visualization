@@ -142,9 +142,9 @@ function showAnimationInterface(){
         .style('opacity', 0)
         .style('transform', 'translateY(-100px)')
       .transition()
-      .duration(1000)
-      .style('opacity', 1)
-      .style('transform', 'translateY(0px)');
+        .duration(1000)
+        .style('opacity', 1)
+        .style('transform', 'translateY(0px)');
 }
 
 function hideAnimationInterface(){

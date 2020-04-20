@@ -4,7 +4,7 @@ let gMainView;
 // Projection objects
 let d3Path;
 
-let simRatio = 25;
+let simRatio = 40;
 
 
 
